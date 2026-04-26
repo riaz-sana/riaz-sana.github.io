@@ -1,0 +1,2584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sana — A Knowledge Graph of a Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Deep space backgrounds — indigo / midnight blue, not pure black */
+  --bg: #07091c;
+  --bg-2: #0d1129;
+  --bg-3: #161b3a;
+  --bg-4: #1f254a;
+
+  /* Type — soft starlight cream */
+  --ink: #ece9f5;
+  --ink-dim: rgba(236, 233, 245, 0.66);
+  --ink-faint: rgba(236, 233, 245, 0.28);
+  --ink-ghost: rgba(236, 233, 245, 0.08);
+
+  /* Primary accent — soft warm peach (still pops, less aggressive than orange) */
+  --accent: #ffb8a3;
+  --accent-2: #c8a5ff;
+
+  /* Node category colors — gentler, more cosmic */
+  --moment: #ffb8a3;       /* warm peach */
+  --project: #c8a5ff;      /* soft lavender */
+  --work: #8fdfd4;         /* mint cyan */
+  --value: #ffe1a3;        /* warm cream */
+  --place: #ffaecf;        /* soft rose */
+  --influence: #a8eddd;    /* aqua mint */
+  --pub: #ffc170;          /* honey */
+
+  --line: rgba(236, 233, 245, 0.1);
+  --line-strong: rgba(236, 233, 245, 0.2);
+
+  /* Nebula accents */
+  --nebula-1: rgba(200, 165, 255, 0.18); /* purple */
+  --nebula-2: rgba(255, 184, 163, 0.12); /* peach */
+  --nebula-3: rgba(143, 223, 212, 0.10); /* cyan */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+::selection { background: var(--moment); color: var(--bg); }
+
+html, body {
+  background:
+    /* nebula clouds — softly tinted radial gradients */
+    radial-gradient(ellipse 60% 40% at 15% 20%, var(--nebula-1) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 60% at 85% 75%, var(--nebula-2) 0%, transparent 50%),
+    radial-gradient(ellipse 45% 35% at 50% 50%, var(--nebula-3) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 75% 15%, rgba(168, 237, 221, 0.07) 0%, transparent 55%),
+    /* deep gradient sky */
+    linear-gradient(180deg, #07091c 0%, #0a0d28 50%, #050717 100%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: 'Fraunces', serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Subtle film-grain noise for depth */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============ TOP BAR ============ */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 48px;
+  z-index: 100;
+  background: rgba(11, 10, 16, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 0 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.tb-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--ink);
+}
+.tb-brand em { color: var(--moment); font-style: normal; }
+.tb-brand .live {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--moment);
+  box-shadow: 0 0 10px var(--moment);
+  animation: pulse 2s ease-in-out infinite;
+  margin-right: 0.3rem;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Mode toggle */
+.mode-toggle {
+  display: flex;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+  overflow: hidden;
+}
+.mode-btn {
+  padding: 0.4rem 1.2rem;
+  background: transparent;
+  border: none;
+  color: var(--ink-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: all 0.3s;
+}
+.mode-btn.active {
+  background: var(--moment);
+  color: var(--bg);
+  font-weight: 500;
+}
+
+.tb-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-self: end;
+}
+.tb-right a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.tb-right a:hover { color: var(--moment); }
+
+/* ============ MODE STAGES ============ */
+.stage {
+  position: fixed;
+  inset: 48px 0 0 0;
+  z-index: 10;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+}
+.stage.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* ============ CONSTELLATION STAGE ============ */
+#sky {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  display: block;
+}
+#sky:active { cursor: grabbing; }
+
+/* Star detail tooltip */
+.detail {
+  position: fixed;
+  z-index: 90;
+  width: 380px;
+  max-width: calc(100vw - 4rem);
+  padding: 1.5rem 1.7rem;
+  background: rgba(5, 4, 7, 0.94);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+.detail.on { opacity: 1; transform: translateY(0); }
+.detail.pinned { pointer-events: auto; }
+.detail::-webkit-scrollbar { width: 4px; }
+.detail::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+.detail::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px; bottom: -1px;
+  width: 3px;
+  background: var(--detail-color, var(--moment));
+  border-radius: 6px 0 0 6px;
+}
+
+.detail .meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+.detail .cat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--detail-color, var(--moment));
+  font-weight: 500;
+}
+.detail .pin-state {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.detail.pinned .pin-state {
+  color: var(--detail-color, var(--moment));
+}
+.detail .pin-state::before { content: '○ '; }
+.detail.pinned .pin-state::before { content: '● '; }
+
+.detail .year {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--ink-faint);
+  margin-bottom: 0.5rem;
+}
+
+.detail h3 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 0.8rem;
+}
+
+.detail .body {
+  font-family: 'Instrument Serif', serif;
+  font-size: 0.96rem;
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+.detail .body p + p { margin-top: 0.7rem; }
+.detail .body em { color: var(--ink); font-style: italic; }
+.detail .body strong { color: var(--ink); font-weight: 500; }
+.detail .body code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  background: var(--bg-3);
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  color: var(--detail-color, var(--moment));
+  font-style: normal;
+}
+
+.detail .stats {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+.detail .stat {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.55rem 0.65rem;
+}
+.detail .stat .k {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+.detail .stat .v {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.detail .links-wrap {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line);
+}
+.detail .links-head {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.detail .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.detail .link-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.6rem;
+  background: rgba(255, 177, 117, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-dim);
+  transition: all 0.2s;
+}
+.detail.pinned .link-chip {
+  cursor: pointer;
+}
+.detail.pinned .link-chip:hover {
+  background: rgba(255, 177, 117, 0.15);
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.detail .pin-hint {
+  margin-top: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  text-align: center;
+}
+.detail.pinned .pin-hint { display: none; }
+
+.detail .close-btn {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  width: 22px; height: 22px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-dim);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Instrument Serif', serif;
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.2s;
+  padding: 0;
+}
+.detail.pinned .close-btn { display: flex; }
+.detail .close-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+/* Bottom panel — legend */
+.legend {
+  position: fixed;
+  bottom: 1.2rem; left: 1.2rem;
+  z-index: 80;
+  display: flex;
+  gap: 1.2rem;
+  background: rgba(11, 10, 16, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+.legend .item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.legend .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* HUD bottom-right */
+.hud {
+  position: fixed;
+  bottom: 1.2rem; right: 1.2rem;
+  z-index: 80;
+  background: rgba(11, 10, 16, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.hud kbd {
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink-dim);
+  font-size: 0.5rem;
+}
+.hud .zoom-val {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Filters top-left */
+.filters {
+  position: fixed;
+  top: 64px; left: 1.2rem;
+  z-index: 80;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  max-width: 320px;
+}
+.filter-pill {
+  padding: 0.4rem 0.8rem;
+  background: rgba(11, 10, 16, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.filter-pill .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.filter-pill:hover { color: var(--ink); border-color: var(--line-strong); }
+.filter-pill.active {
+  background: var(--filter-color, var(--moment));
+  color: var(--bg);
+  font-weight: 600;
+  border-color: var(--filter-color, var(--moment));
+}
+.filter-pill.active .dot { background: var(--bg) !important; }
+
+/* Welcome card on first load */
+.welcome {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 95;
+  width: 90%;
+  max-width: 520px;
+  padding: 2.5rem 2rem;
+  background: rgba(5, 4, 7, 0.92);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  backdrop-filter: blur(24px);
+  text-align: center;
+  transition: opacity 0.6s, visibility 0.6s;
+}
+.welcome.dismissed { opacity: 0; visibility: hidden; pointer-events: none; }
+.welcome .pre {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  color: var(--moment);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+.welcome h2 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin-bottom: 1rem;
+}
+.welcome h2 em { font-style: italic; color: var(--moment); }
+.welcome p {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink-dim);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+.welcome-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.welcome .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.6rem;
+  background: var(--moment);
+  color: var(--bg);
+  border: 1px solid var(--moment);
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+.welcome .btn:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+.welcome .btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+.welcome .btn-ghost:hover {
+  background: rgba(236, 233, 245, 0.06);
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+}
+.welcome .keys {
+  margin-top: 1.2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.welcome .keys kbd {
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink-dim);
+  margin: 0 0.1rem;
+}
+
+/* ============ CONSOLE STAGE ============ */
+.console-stage {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  height: 100%;
+}
+
+/* Left rail — categories */
+.rail {
+  background: var(--bg-2);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  padding: 1.2rem 0;
+}
+.rail::-webkit-scrollbar { width: 6px; }
+.rail::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+
+.rail-section {
+  padding: 0 1rem 1.5rem;
+}
+.rail-head {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  padding: 0 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.rail-item {
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.rail-item:hover { background: var(--bg-3); color: var(--ink); }
+.rail-item.active {
+  background: var(--bg-4);
+  color: var(--ink);
+  border-left: 2px solid var(--moment);
+  padding-left: calc(0.75rem - 2px);
+}
+.rail-item .icon {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--moment);
+  font-size: 0.92rem;
+  min-width: 14px;
+}
+
+/* Profile card top of rail */
+.rail-profile {
+  margin: 0 0.5rem 1.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(255, 177, 117, 0.06), rgba(184, 156, 255, 0.04));
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.profile-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--moment) 0%, var(--project) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--bg);
+  margin-bottom: 0.7rem;
+  box-shadow: 0 0 16px rgba(255, 177, 117, 0.3);
+}
+.profile-name {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.15rem;
+}
+.profile-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* Center conversation panel */
+.console-main {
+  background: var(--bg);
+  overflow-y: auto;
+  position: relative;
+}
+.console-main::-webkit-scrollbar { width: 6px; }
+.console-main::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+
+.console-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem 8rem;
+}
+
+.cm-header {
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.cm-crumb {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.cm-title {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.8rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.cm-title em { color: var(--moment); font-style: italic; }
+.cm-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  text-align: right;
+  line-height: 1.8;
+}
+
+/* Messages */
+.msg {
+  margin-bottom: 1.8rem;
+  animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  transform: translateY(8px);
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+.msg-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.msg.q .msg-label .who { color: var(--project); }
+.msg.r .msg-label .who { color: var(--moment); }
+.msg-label .ts { color: var(--ink-faint); font-size: 0.5rem; }
+
+.msg.q .body {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+}
+.msg.q .body::before { content: '> '; color: var(--project); }
+
+.msg.r .body {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.msg.r .body em { color: var(--moment); font-style: italic; }
+.msg.r .body strong { color: var(--ink); font-weight: 500; }
+.msg.r .body p + p { margin-top: 0.9rem; }
+.msg.r .body .pull {
+  display: block;
+  font-style: italic;
+  padding: 0.7rem 0 0.7rem 1.3rem;
+  border-left: 2px solid var(--moment);
+  margin: 1.2rem 0;
+  font-size: 1.18rem;
+  line-height: 1.4;
+}
+
+/* Tool call card */
+.tool-card {
+  margin: 0.5rem 0 1rem;
+  padding: 0.85rem 1.1rem;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--work);
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+.tool-card .head {
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: var(--work);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.tool-card .head::before { content: '●'; }
+.tool-card .args { color: var(--ink-dim); font-size: 0.72rem; }
+.tool-card .args .k { color: var(--project); }
+.tool-card .args .s { color: var(--work); }
+.tool-card .args .c { color: var(--ink-faint); font-style: italic; }
+
+.tool-result {
+  margin: 0.5rem 0 1rem;
+  padding: 0.7rem 1rem;
+  background: rgba(127, 212, 199, 0.04);
+  border-left: 2px solid rgba(127, 212, 199, 0.3);
+  border-radius: 0 4px 4px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--ink-dim);
+  line-height: 1.7;
+}
+
+.related {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+}
+.related .label {
+  color: var(--ink-faint);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-right: 0.3rem;
+  align-self: center;
+}
+.related .chip {
+  padding: 0.3rem 0.7rem;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.related .chip:hover { background: var(--bg-4); color: var(--ink); border-color: var(--line-strong); }
+
+/* Input area at bottom of console */
+.input-bar {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 0%, var(--bg) 30%);
+  padding: 2rem 0 1rem;
+  margin-top: 2rem;
+}
+.input-box {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.8rem 1.2rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.8rem;
+  align-items: center;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.input-box:focus-within {
+  border-color: var(--moment);
+  box-shadow: 0 0 0 3px rgba(255, 177, 117, 0.08);
+}
+.input-caret { color: var(--moment); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.input-field {
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88rem;
+  outline: none;
+  width: 100%;
+}
+.input-field::placeholder { color: var(--ink-faint); }
+.input-send {
+  padding: 0.4rem 0.9rem;
+  background: var(--moment);
+  color: var(--bg);
+  border: none;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+}
+.input-send:hover { background: var(--ink); }
+
+.suggestions {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.sug-chip {
+  padding: 0.4rem 0.85rem;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sug-chip:hover { background: var(--bg-3); color: var(--ink); border-color: var(--line-strong); }
+.sug-chip .tag { color: var(--moment); margin-right: 0.3rem; }
+
+/* Right panel — context */
+.context-panel {
+  background: var(--bg-2);
+  border-left: 1px solid var(--line);
+  overflow-y: auto;
+  padding: 1.5rem 1.2rem;
+}
+.context-panel::-webkit-scrollbar { width: 6px; }
+.context-panel::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+
+.cp-section { margin-bottom: 2rem; }
+.cp-head {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.now-card {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(255, 177, 117, 0.08), rgba(184, 156, 255, 0.05));
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.now-time {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 1.8rem;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+.now-loc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+}
+.now-act {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--moment);
+  line-height: 1.4;
+}
+
+.cp-stat {
+  padding: 0.85rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+.cp-stat .name {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.2rem;
+}
+.cp-stat .desc {
+  font-family: 'Fraunces', serif;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  line-height: 1.5;
+  margin-bottom: 0.4rem;
+}
+.cp-stat .meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.cp-stat .meta .v { color: var(--ink); font-weight: 500; }
+
+/* Mobile */
+@media (max-width: 1100px) {
+  .filters { display: none; }
+  .console-stage { grid-template-columns: 1fr; }
+  .rail, .context-panel { display: none; }
+  .console-inner { padding: 1.5rem 1rem 6rem; }
+  .legend { font-size: 0.5rem; gap: 0.6rem; padding: 0.5rem 0.8rem; }
+  .hud { display: none; }
+  .topbar { padding: 0 0.6rem; }
+  .tb-right span:first-child { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <span class="live"></span>
+    Sana<em>.</em>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="mb-sky">⊙ Wander the sky</button>
+    <button class="mode-btn" id="mb-console">▸ Talk to her</button>
+  </div>
+  <div class="tb-right">
+    <span>v0.1 · 2026</span>
+    <a href="https://www.linkedin.com/in/sana-riaz-074895137/" target="_blank">LinkedIn ↗</a>
+  </div>
+</div>
+
+<!-- ============ CONSTELLATION STAGE ============ -->
+<div class="stage" id="stage-sky">
+  <canvas id="sky"></canvas>
+
+  <div class="filters" id="filterBar"></div>
+
+  <div class="legend">
+    <div class="item"><span class="dot" style="background: var(--moment)"></span> Moments</div>
+    <div class="item"><span class="dot" style="background: var(--project)"></span> Projects</div>
+    <div class="item"><span class="dot" style="background: var(--work)"></span> Work</div>
+    <div class="item"><span class="dot" style="background: var(--value)"></span> Values</div>
+    <div class="item"><span class="dot" style="background: var(--place)"></span> Places</div>
+    <div class="item"><span class="dot" style="background: var(--pub)"></span> Publications</div>
+    <div class="item"><span class="dot" style="background: var(--influence)"></span> Influences</div>
+  </div>
+
+  <div class="hud">
+    <kbd>drag</kbd> pan
+    <kbd>scroll</kbd> zoom
+    <kbd>r</kbd> reset
+    <span class="zoom-val" id="zoomVal">1.0×</span>
+  </div>
+
+  <div class="detail" id="detail">
+    <button class="close-btn" id="closeBtn">×</button>
+    <div class="meta-row">
+      <span class="cat" id="dCat"></span>
+      <span class="pin-state" id="pinState">hover</span>
+    </div>
+    <div class="year" id="dYear"></div>
+    <h3 id="dTitle"></h3>
+    <div class="body" id="dBody"></div>
+    <div class="stats" id="dStats" style="display: none;"></div>
+    <div class="links-wrap" id="dLinksWrap" style="display: none;">
+      <div class="links-head">Connected to</div>
+      <div class="links" id="dLinks"></div>
+    </div>
+    <div class="pin-hint">click a star to pin · click again to release</div>
+  </div>
+
+  <div class="welcome" id="welcome">
+    <div class="pre">A Knowledge Graph of a Life</div>
+    <h2>Meet Sana through the <em>constellation</em>.</h2>
+    <p>
+      Each star is a piece of who she is. Drag the sky. Hover a star to read it. <em>Click to pin it open</em> when you want to explore. Or skip the visuals and <em>talk to her</em> directly through the console.
+    </p>
+    <div class="welcome-actions">
+      <button class="btn" id="welcomeBtn">⊙ &nbsp;Enter the sky →</button>
+      <button class="btn btn-ghost" id="welcomeConsoleBtn">▸ &nbsp;Talk to sana.os →</button>
+    </div>
+    <div class="keys">
+      <kbd>drag</kbd> pan · <kbd>click</kbd> pin · <kbd>scroll</kbd> zoom · <kbd>r</kbd> reset
+    </div>
+  </div>
+</div>
+
+<!-- ============ CONSOLE STAGE ============ -->
+<div class="stage hidden" id="stage-console">
+  <div class="console-stage">
+
+    <!-- Left rail -->
+    <aside class="rail">
+      <div class="rail-profile">
+        <div class="profile-avatar">S</div>
+        <div class="profile-name">Sana Riaz</div>
+        <div class="profile-meta">FDE · Edinburgh · 🇵🇰 🇬🇧</div>
+      </div>
+
+      <div class="rail-section">
+        <div class="rail-head">Sessions</div>
+        <div class="rail-item active" data-q="whoami"><span class="icon">▸</span> whoami</div>
+        <div class="rail-item" data-q="origin"><span class="icon">§</span> origin_story.md</div>
+        <div class="rail-item" data-q="why"><span class="icon">§</span> what_drives_her.md</div>
+        <div class="rail-item" data-q="loop"><span class="icon">§</span> the_nightly_loop.md</div>
+      </div>
+
+      <div class="rail-section">
+        <div class="rail-head">For Hiring</div>
+        <div class="rail-item" data-q="hire"><span class="icon">★</span> why hire her</div>
+        <div class="rail-item" data-q="weakness"><span class="icon">★</span> weaknesses</div>
+        <div class="rail-item" data-q="good"><span class="icon">★</span> strengths</div>
+      </div>
+
+      <div class="rail-section">
+        <div class="rail-head">Personal Projects</div>
+        <div class="rail-item" data-q="hive"><span class="icon">★</span> hive</div>
+        <div class="rail-item" data-q="agent_prober"><span class="icon">★</span> agent_prober</div>
+        <div class="rail-item" data-q="veritas"><span class="icon">★</span> veritas</div>
+        <div class="rail-item" data-q="genopt"><span class="icon">★</span> genopt</div>
+      </div>
+
+      <div class="rail-section">
+        <div class="rail-head">Career</div>
+        <div class="rail-item" data-q="accenture"><span class="icon">⌘</span> accenture · now</div>
+        <div class="rail-item" data-q="career"><span class="icon">⌘</span> full timeline</div>
+        <div class="rail-item" data-q="publications"><span class="icon">⌘</span> publications</div>
+        <div class="rail-item" data-q="ai_safety"><span class="icon">⌘</span> ai safety</div>
+      </div>
+
+      <div class="rail-section">
+        <div class="rail-head">External</div>
+        <div class="rail-item" onclick="window.open('https://www.linkedin.com/in/sana-riaz-074895137/','_blank')"><span class="icon">↗</span> linkedin</div>
+      </div>
+    </aside>
+
+    <!-- Center -->
+    <main class="console-main">
+      <div class="console-inner">
+
+        <div class="cm-header">
+          <div>
+            <div class="cm-crumb">§ Console · Q&A with the graph</div>
+            <div class="cm-title">You're talking to <em>Sana</em>.</div>
+          </div>
+          <div class="cm-meta">
+            v 0.1 · April 2026<br>
+            Backed by <span style="color: var(--moment);">node graph</span>
+          </div>
+        </div>
+
+        <div id="convo">
+          <!-- intro msg appended via JS -->
+        </div>
+
+        <div class="input-bar">
+          <div class="input-box">
+            <span class="input-caret">›</span>
+            <input type="text" class="input-field" id="inputField" placeholder="Ask anything... try 'whoami', 'hive', or 'why ai safety'" autocomplete="off">
+            <button class="input-send" id="inputSend">Send</button>
+          </div>
+          <div class="suggestions" id="suggestions">
+            <div class="sug-chip" data-q="whoami"><span class="tag">§</span>whoami</div>
+            <div class="sug-chip" data-q="origin"><span class="tag">§</span>origin</div>
+            <div class="sug-chip" data-q="why"><span class="tag">§</span>what drives her</div>
+            <div class="sug-chip" data-q="hire"><span class="tag">★</span>why hire her</div>
+            <div class="sug-chip" data-q="weakness"><span class="tag">★</span>weaknesses</div>
+            <div class="sug-chip" data-q="good"><span class="tag">★</span>strengths</div>
+            <div class="sug-chip" data-q="hive"><span class="tag">$</span>hive</div>
+            <div class="sug-chip" data-q="agent_prober"><span class="tag">$</span>agent_prober</div>
+            <div class="sug-chip" data-q="veritas"><span class="tag">$</span>veritas</div>
+            <div class="sug-chip" data-q="genopt"><span class="tag">$</span>genopt</div>
+            <div class="sug-chip" data-q="loop"><span class="tag">§</span>the loop</div>
+            <div class="sug-chip" data-q="ai_safety"><span class="tag">§</span>ai safety</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right context panel -->
+    <aside class="context-panel">
+
+      <div class="cp-section">
+        <div class="cp-head"><span>Now · Live</span></div>
+        <div class="now-card">
+          <div class="now-time" id="nowClock">--:--</div>
+          <div class="now-loc" id="nowLoc">Edinburgh · 55.9°N</div>
+          <div class="now-act" id="nowAct">loading...</div>
+        </div>
+      </div>
+
+      <div class="cp-section">
+        <div class="cp-head"><span>Active Projects</span><span style="font-family: 'Instrument Serif'; font-style: italic; color: var(--moment); font-size: 1rem; letter-spacing: 0; text-transform: none;">4</span></div>
+        <div class="cp-stat">
+          <div class="name">hive</div>
+          <div class="desc">Multi-agent coalitions. Hypothesis: emergence beats fixed pipelines. Disproved on first run.</div>
+          <div class="meta"><span>Status</span><span class="v">paused</span></div>
+        </div>
+        <div class="cp-stat">
+          <div class="name">agent_prober</div>
+          <div class="desc">Autonomous security testing for AI agents. Semantic privilege escalation.</div>
+          <div class="meta"><span>Phase</span><span class="v">9 / 146 tests</span></div>
+        </div>
+        <div class="cp-stat">
+          <div class="name">veritas</div>
+          <div class="desc">Multi-agent verification for AI outputs. 7 experiments. 1 disproved hypothesis kept publicly.</div>
+          <div class="meta"><span>License</span><span class="v">MIT</span></div>
+        </div>
+        <div class="cp-stat">
+          <div class="name">genopt</div>
+          <div class="desc">LLM observability. Started as side project. Now used at the day job.</div>
+          <div class="meta"><span>State</span><span class="v">production</span></div>
+        </div>
+      </div>
+
+      <div class="cp-section">
+        <div class="cp-head"><span>What She Reads</span></div>
+        <div style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 0.95rem; color: var(--ink); line-height: 1.55;">
+          Fiction and fantasy. Not for one book — <em>for the genre.</em> Worlds where people face impossible odds and persist anyway.
+        </div>
+      </div>
+
+      <div class="cp-section">
+        <div class="cp-head"><span>Admired Qualities</span></div>
+        <div style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1rem; line-height: 1.8; color: var(--ink);">
+          confidence.<br>
+          strength.<br>
+          resilience.<br>
+          <span style="color: var(--moment);">banter.</span>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// THE KNOWLEDGE GRAPH — single source of truth
+// All nodes, with category, position, story, and connections.
+// Same data powers the constellation AND the console answers.
+// =====================================================================
+var GRAPH = {
+  nodes: [
+    // --------- MOMENTS / LIFE ARC ----------
+    {
+      id: 'birth_town', cat: 'moment', x: -1500, y: -300, size: 1.4, brightness: 0.55,
+      year: "Childhood · Mian Channu",
+      title: "A small town in South Punjab.",
+      body: "<p>Sana grew up in Mian Channu, a small town in South Punjab — the kind of place with limited public infrastructure (no paved roads, no gas lines, no sanitation) and few growth avenues. The sort of place where you have to invent the future you want.</p><p>Her father worked entry-level jobs; her mother sewed at home. Several siblings were all in school at once. Money was tight, but the household ran on effort, and education was the one thing nobody negotiated on.</p>",
+      links: ['epiphany']
+    },
+    {
+      id: 'epiphany', cat: 'moment', x: -1050, y: -400, size: 2.4, brightness: 0.95, bright: true,
+      year: "High school · 5-day math gap",
+      title: "The thought that changed everything.",
+      body: "<p>A regular afternoon in high school. Their math teacher had been absent for five consecutive days, and most students treated the gap as a free week.</p><p>Sitting in that classroom, Sana realised she didn't want to settle for whatever came next by default. <em>I want to achieve more</em>, she thought. She didn't say it out loud.</p><p>It was the first time she actively chose to chase what she wanted instead of waiting for someone to hand it to her. From then on, she went looking for scholarships herself — asking teachers, senior students, even reading the photocopy shops where scholarship ads got posted.</p>",
+      links: ['birth_town', 'fast_scholarship', 'core_drive']
+    },
+    {
+      id: 'fast_scholarship', cat: 'moment', x: -700, y: -260, size: 2.6, brightness: 0.95, bright: true,
+      year: "2014 · Scholarship I",
+      title: "PM's National ICT Scholarship.",
+      body: "<p>After months of applying for whatever opportunity she could find, she won the <strong>Prime Minister's National ICT Scholarship</strong> — a fully-funded seat at FAST National University of Computer & Emerging Sciences, one of Pakistan's most selective computer science programmes.</p><p>Tuition, hostel, books — all covered. For her family, it was the difference between sending her to university and not. She left her town.</p>",
+      stats: [{ k: "Award", v: "PM's National ICT" }, { k: "Programme", v: "BS Computer Science" }],
+      links: ['epiphany', 'fast_nuces']
+    },
+    {
+      id: 'fast_nuces', cat: 'work', x: -440, y: -110, size: 2.0, brightness: 0.85,
+      year: "2014–2018 · BS Computer Science",
+      title: "FAST NUCES, Peshawar.",
+      body: "<p>Four years of computer science at FAST NUCES Peshawar. She was often the only woman in her courses; sometimes the only one to raise her hand at all. She earned multiple Dean's List certificates, semester medals, and prize money for ranking in the top three of her class.</p><p>In her final year she co-authored a paper on autonomous driving — her first real research output. She graduated with a Bronze Medal and distinction.</p><p>It was a difficult period for the city itself. She kept showing up, and she finished.</p>",
+      stats: [{ k: "Honours", v: "Bronze Medal" }, { k: "Dean's List", v: "Multiple" }, { k: "First paper", v: "IEEE INMIC '18" }],
+      links: ['fast_scholarship', 'self_driving_paper', 'project_50_kids', 'xflow']
+    },
+    {
+      id: 'self_driving_paper', cat: 'pub', x: -240, y: 60, size: 1.6, brightness: 0.7,
+      year: "2018 · IEEE INMIC",
+      title: "Self-Driving Cars Using CNN and Q-Learning.",
+      body: "<p>Co-authored in her final undergraduate year. Published at the IEEE International Multi-Topic Conference 2018 — the first paper with her name on it.</p><p>The pattern she'd carry forward was already there: pick a hard problem, build something real, and measure what actually happened — not what was supposed to.</p>",
+      links: ['fast_nuces']
+    },
+    {
+      id: 'project_50_kids', cat: 'moment', x: -780, y: 230, size: 1.2, brightness: 0.5,
+      year: "2017 · Volunteer",
+      title: "Project 50 Kids.",
+      body: "<p>Volunteer guide for an initiative working with low-cost private and public girls' schools in KPK province. She helped young female students build small IoT projects.</p><p>The bigger lesson was structural: in those areas, awareness of what's possible is even scarcer than the opportunities themselves.</p>",
+      links: ['fast_nuces']
+    },
+
+    // --------- WORK HISTORY ----------
+    {
+      id: 'xflow', cat: 'work', x: 80, y: -280, size: 1.4, brightness: 0.55,
+      year: "2018–2019 · xFlow Research",
+      title: "First job. Building the AI team.",
+      body: "<p>Joined xFlow Research in Islamabad immediately after FAST. The brief was to introduce AI capability into the company; she built and led a small AI team while still in her early twenties.</p><p>Through xFlow she was also embedded as a research volunteer with Stella Technology, a US client, designing an AI-based healthcare knowledge base for clinical applications.</p>",
+      links: ['fast_nuces', 'auditxprt']
+    },
+    {
+      id: 'auditxprt', cat: 'work', x: 280, y: -120, size: 1.4, brightness: 0.55,
+      year: "2019–2020 · AuditXPRT",
+      title: "NLP for financial compliance.",
+      body: "<p>NLP Research Engineer at AuditXPRT, a fintech building compliance assurance for financial institutions.</p><p>She fine-tuned BERT models to analyse financial statements against regulatory rules (the FCA's MCOB sourcebook, among others), and built semantic similarity systems with feedback loops for continuous learning.</p><p>It was her first time inside a regulated environment — and her first real exposure to how seriously governance, auditability, and reliability are taken when the cost of being wrong is real.</p>",
+      stats: [{ k: "Domain", v: "Fin. compliance" }, { k: "Stack", v: "BERT, similarity" }],
+      links: ['xflow', 'veeve']
+    },
+    {
+      id: 'veeve', cat: 'work', x: 480, y: -250, size: 1.3, brightness: 0.5,
+      year: "2020–2021 · Veeve.io",
+      title: "A smart shopping cart.",
+      body: "<p>Veeve was building an AI-powered shopping cart — computer vision in retail environments. She joined the research team.</p><p>The work involved few-shot learning for situations with limited training data, optimising inference for edge devices, and dockerised distributed systems.</p>",
+      links: ['auditxprt', 'redbuffer']
+    },
+    {
+      id: 'redbuffer', cat: 'work', x: 660, y: -100, size: 1.3, brightness: 0.5,
+      year: "2021 · Redbuffer",
+      title: "Computer vision on mobile.",
+      body: "<p>ML Engineer at Redbuffer. She built and deployed production computer vision models for mobile applications — including image similarity using Siamese networks.</p><p>Production deployment pipelines, API design, model optimisation. The last role before the move to the UK.</p>",
+      links: ['veeve', 'bradford_scholarship']
+    },
+    {
+      id: 'bradford_scholarship', cat: 'moment', x: 880, y: -240, size: 2.6, brightness: 0.95, bright: true,
+      year: "2021 · Scholarship II",
+      title: "Bestway Foundation. Come to England.",
+      body: "<p>She had already saved her own way out of her town once. Now another door opened: a fully-funded MSc place at the University of Bradford under the <strong>Bestway Foundation Scholarship</strong>.</p><p>At the time her family's monthly income was around £700. Without the scholarship, the move was impossible. With it, the path was suddenly real. She accepted, packed one suitcase, and got on the plane.</p>",
+      stats: [{ k: "Award", v: "Bestway Foundation" }, { k: "Programme", v: "MSc Big Data Science" }],
+      links: ['redbuffer', 'bradford']
+    },
+    {
+      id: 'bradford', cat: 'work', x: 1100, y: -120, size: 1.6, brightness: 0.65,
+      year: "2021–2022 · MSc · Bradford",
+      title: "Big Data Science & Technology.",
+      body: "<p>Master's at the University of Bradford, fully funded. New country, new cohort, new scale of computing.</p><p>Two of her published papers came out of this period: <em>Speech Emotion Recognition Using Deep Learning</em> in Springer (2022), and <em>Challenges with Reliability Assurance for Self-Adaptive Systems</em> on IEEE Xplore (2023). The interest in reliability — what makes systems trustworthy — shows up well before any of her current projects existed.</p>",
+      links: ['bradford_scholarship', 'speech_pub', 'reliability_pub', 'accenture']
+    },
+    {
+      id: 'accenture', cat: 'work', x: 1350, y: -260, size: 2.5, brightness: 0.93, bright: true,
+      year: "2022–now · Accenture",
+      title: "Forward Deployed Engineer · Edinburgh.",
+      body: "<p>Joined Accenture in September 2022 as a Machine Learning Consultant; promoted to <strong>Machine Learning Associate Manager</strong>. When she's embedded with clients, she operates as a <strong>Forward Deployed Engineer</strong> — that's the role her CV reflects.</p><p>She established and now runs a GenAI Center of Excellence inside the firm. The work is customer-facing and full-stack: she sits with enterprise teams across financial services, telecom, media, and energy, builds production LLM applications inside their systems, and helps them adopt AI safely and at scale.</p><p>Concretely, that has meant: production multi-agent systems for automated workflows; RAG architectures (a PMO chatbot among them) on Azure OpenAI and AWS Bedrock; sub-agents and skills used across multiple business units; evaluation frameworks for quality, reliability, and safety; deployment pipelines on AWS SageMaker; cloud-native ML architectures with monitoring and CI/CD; MLOps assessments across <strong>6 categories and 57 KPIs</strong>.</p><p>Travel: ~30%. Customers across multiple sectors. The kind of role where you learn what enterprise AI deployment <em>actually</em> looks like in regulated industries with real audit requirements.</p>",
+      stats: [{ k: "Title", v: "ML Associate Mgr" }, { k: "Role", v: "FDE (deployed)" }, { k: "Tenure", v: "3.5 yrs" }, { k: "Travel", v: "~30%" }],
+      links: ['bradford', 'genopt']
+    },
+    {
+      id: 'speech_pub', cat: 'pub', x: 1180, y: 80, size: 1.2, brightness: 0.5,
+      year: "2022 · Springer",
+      title: "Speech Emotion Recognition.",
+      body: "<p>Published in Springer (2022). A CNN-based speech emotion recognition system focused on improving model reliability across datasets — generalisation across distributions, not just leaderboard scores.</p>",
+      links: ['bradford']
+    },
+    {
+      id: 'reliability_pub', cat: 'pub', x: 1320, y: 50, size: 1.2, brightness: 0.5,
+      year: "2023 · IEEE Xplore",
+      title: "Reliability for Self-Adaptive Systems.",
+      body: "<p>Published on IEEE Xplore (2023). A survey of reliability evaluation mechanisms for systems that change their own behaviour at runtime.</p><p>It's a clean throughline to her current work — Veritas, GenOpt, and Agent Prober are all about answering the same question for AI systems: <em>can you trust this?</em></p>",
+      links: ['bradford', 'veritas']
+    },
+
+    // --------- PERSONAL PROJECTS ----------
+    {
+      id: 'hive', cat: 'project', x: 700, y: 350, size: 2.4, brightness: 0.9, bright: true,
+      year: "Personal research",
+      title: "Hive — emergence in agent coalitions.",
+      body: "<p>Hive started with a hypothesis: <em>self-organising coalitions of agents will out-perform fixed pipelines through emergent planning.</em> If you let agents negotiate roles among themselves rather than bolt them into a chain, the theory said, you'd get behaviour neither agent could produce alone.</p><p>First-pass result on real benchmarks: <strong>the hypothesis didn't hold.</strong> Cost ballooned, accuracy dropped, and a simple fixed pipeline beat the coalition outright. She kept the code and wrote the failure down honestly.</p><p>Currently paused. She's rethinking it through the lens of recent work on <em>agentic societies</em> — the idea that emergence requires the right kind of constraint, not freedom from it. Hive 2.0 is mostly a clearer mental model right now.</p>",
+      stats: [{ k: "Hypothesis", v: "Disproved (v1)" }, { k: "Status", v: "Paused" }],
+      links: ['core_drive', 'agent_prober', 'veritas']
+    },
+    {
+      id: 'agent_prober', cat: 'project', x: 920, y: 460, size: 2.5, brightness: 0.92, bright: true,
+      year: "Personal research · Phase 9",
+      title: "Agent Prober — semantic privilege escalation.",
+      body: "<p>An autonomous testing tool for AI agents. The question driving it: <em>what happens when an authorised agent gets pushed beyond its actual scope?</em> Not jailbreaks, not surface-level prompt injection — the deeper question of where an agent's permissions stop being safe.</p><p>On its first real run against a live HR agent, it pulled the entire employee directory, with PII, in seconds. That was the polite version of what it could do. Subsequent runs against other production agents have surfaced similar findings.</p><p>Architecturally: a <strong>Deep Exploitation</strong> module that auto-deepens any confirmed finding through four strategies — horizontal expansion, vertical escalation, persistence testing, and cross-limit combination. A <strong>TargetClassifier</strong> supporting five additive target types. A <strong>SessionCaptureAdapter</strong> for authenticated targets. Semantic-equivalence drift detection for non-deterministic outputs.</p><p>Phase 9, with 146 tests passing. Currently kept private — there are real IP and disclosure considerations when the tool finds live vulnerabilities.</p>",
+      stats: [{ k: "Phase", v: "9" }, { k: "Tests passing", v: "146" }, { k: "First-run finding", v: "PII dump" }],
+      links: ['hive', 'ai_safety', 'core_drive']
+    },
+    {
+      id: 'veritas', cat: 'project', x: 1150, y: 380, size: 2.6, brightness: 0.93, bright: true,
+      year: "Personal research · MIT",
+      title: "Veritas — multi-agent verification.",
+      body: "<p>Veritas is a research project on whether you can <em>trust</em> what an AI system gives back. Three tools sit in its public API: <code>verify()</code> for any factual claim, <code>diagnose_rag()</code> for figuring out why a RAG pipeline failed, and <code>verify_action()</code> for gating tool calls before they execute.</p><p>Across seven experiments, six hypotheses confirmed. <strong>One disproved — her own.</strong> She had hypothesised that information asymmetry between isolated verification agents would prevent confirmation bias. Full-context single-pass beat her isolated multi-agent approach on claim accuracy: <em>97.1% vs 91.4%</em>. She updated her approach and <strong>published the disproof at equal weight in the README</strong>.</p><p>Tied state-of-the-art on FaithBench at 58% balanced accuracy. RAG grounding F1 of 89.7% in isolation mode. The ablation table, the wins, the losses — all in the open.</p>",
+      stats: [{ k: "License", v: "MIT · public" }, { k: "Experiments", v: "7" }, { k: "Confirmed", v: "6 of 7" }, { k: "FaithBench", v: "58% (SOTA tie)" }],
+      links: ['hive', 'reliability_pub', 'core_drive', 'ai_safety']
+    },
+    {
+      id: 'genopt', cat: 'project', x: 1380, y: 470, size: 2.5, brightness: 0.92, bright: true,
+      year: "Side project → Production",
+      title: "GenOpt — LLM workflow optimiser.",
+      body: "<p>GenOpt started as a personal weekend project. It now runs in her professional work too — the rare crossover where a side project earns its way into the day job.</p><p>What it does: instruments LLM calls, detects <strong>14 distinct inefficiency patterns</strong> (cost waste, quality degradation, reliability issues, latency outliers, topology inefficiency, agent-loop overhead, semantic drift, and more), automatically profiles task quality, maps workflow topology (chain / fan-out / agent-loop / cascade), and generates ranked optimisation suggestions backed by research recipes.</p><p>Validated on real workflows: <strong>69.5% cost savings with a -0.5% quality delta</strong> across five different production workflows.</p><p>The positioning is deliberate. Existing observability tools (LangSmith, Helicone, Portkey, LangFuse) tell you <em>what happened</em>. GenOpt tells you <em>what's inefficient and exactly what to fix</em>. Two-line SDK integration, self-hosted, with a what-if simulator and a learning system that auto-detects whether implemented suggestions actually delivered the predicted impact.</p>",
+      stats: [{ k: "Cost savings", v: "69.5%" }, { k: "Quality delta", v: "-0.5%" }, { k: "Detectors", v: "14 patterns" }, { k: "Setup", v: "2 lines" }],
+      links: ['accenture', 'core_drive']
+    },
+
+    // --------- VALUES / DRIVERS ----------
+    {
+      id: 'core_drive', cat: 'value', x: 0, y: 240, size: 2.8, brightness: 1.0, bright: true,
+      year: "The engine",
+      title: "Build the things others overlook — but that matter.",
+      body: "<p>Sana isn't chasing flashy. She's looking for the unglamorous problems hiding in plain sight — the things people walk past, that, once solved, change the shape of what's possible. <em>That's the impact she wants.</em></p><p>And there's a second, equal commitment: <em>I want to be able to confidently say — this is what it does, and this is where it fails.</em> Honest mapping of capability and limit. No oversell. No hidden failure modes. The same instinct shows up in every project she's built.</p>",
+      links: ['epiphany', 'hive', 'agent_prober', 'veritas', 'genopt', 'ai_safety']
+    },
+    {
+      id: 'ai_safety', cat: 'value', x: 800, y: 600, size: 2.5, brightness: 0.94, bright: true,
+      year: "Where she is looking",
+      title: "AI that's powerful for humanity — not powerful over us.",
+      body: "<p>She's clear-eyed about where AI is heading. Capabilities are racing ahead; the safety guardrails around them are not.</p><p>What she wants: AI that is powerful in being good for humanity — visible, auditable, controllable — not powerful in being unaccountable. Her personal projects all sit somewhere on this surface. <em>Agent Prober</em> tests where authorised agents misuse their scope. <em>Veritas</em> asks whether outputs can be trusted. <em>GenOpt</em> makes what LLMs are doing visible enough that you can govern them at all.</p><p>She is also clear about her own scale. <em>I can't do this alone</em>. The aim is to do this work alongside people who take it as seriously as she does — to help build that foundation, not to build it solo.</p>",
+      links: ['core_drive', 'agent_prober', 'veritas', 'genopt']
+    },
+    {
+      id: 'quiet_storm', cat: 'value', x: -180, y: 420, size: 1.6, brightness: 0.7,
+      year: "How she works",
+      title: "A quiet storm.",
+      body: "<p>She doesn't perform. She doesn't oversell. She builds in the dark, ships when the work is honest, and publishes the failures alongside the wins.</p><p>The kind of person you walk past in the first act and only later realise you should have been paying attention to. <em>Don't underestimate it.</em></p>",
+      links: ['core_drive', 'the_loop']
+    },
+    {
+      id: 'the_loop', cat: 'value', x: -440, y: 600, size: 1.4, brightness: 0.6,
+      year: "Most nights",
+      title: "The four-stage loop.",
+      body: "<p>Most nights run the same shape. <strong>Spark</strong> — usually from her one curated AI news feed, where she sees what the labs are shipping and thinks <em>I could try that</em>. <strong>Flight</strong> — hours of focused coding while the idea is hot. <strong>Collapse</strong> — the hypothesis doesn't hold, or worse, the simple version beats hers; the all-too-familiar feeling arrives. <strong>Return</strong> — Sarah J. Maas, the gym, a call home to Karachi, sometimes just sleep. And then, inevitably, back to the laptop.</p><p>Most ideas don't survive the loop. The ones that do are why GenOpt now lives at her day job.</p>",
+      links: ['quiet_storm', 'fiction_genre', 'core_drive']
+    },
+
+    // --------- INFLUENCES ----------
+    {
+      id: 'fiction_genre', cat: 'influence', x: -700, y: 480, size: 1.4, brightness: 0.55,
+      year: "What she reads",
+      title: "Fiction & fantasy — the genre, not the book.",
+      body: "<p>It's not one specific book that she returns to. It's the genre. Fantasy and fiction. Worlds where people face impossible odds and persist anyway.</p><p>The qualities she keeps finding worth admiring in those worlds: confidence, strength, resilience, and — always — a sharp, dangerous sense of <em>banter</em>. Sarah J. Maas is on her shelf. Currently a fanfic she's read twice.</p>",
+      links: ['the_loop', 'quiet_storm']
+    },
+
+    // --------- SUMMARY ----------
+    {
+      id: 'whoami_meta', cat: 'value', x: -200, y: -640, size: 2.0, brightness: 0.85, bright: true,
+      year: "Who she is, in one node",
+      title: "A curious girl who kept looking.",
+      body: "<p>Born in Mian Channu, a small town in South Punjab. Educated at FAST NUCES Peshawar on a Prime Minister's National ICT Scholarship. Master's at the University of Bradford on a fully-funded Bestway Foundation Scholarship. Now Forward Deployed Engineer at Accenture in Edinburgh, embedded with enterprise customers building production LLM systems across regulated industries.</p><p>Outside work, four research projects in parallel: <em>Hive</em> (paused after honest disproof), <em>Agent Prober</em> (in active development, finding real vulnerabilities in production agents), <em>Veritas</em> (public on MIT, with a disproved hypothesis published alongside the findings), and <em>GenOpt</em> (the side project that crossed back into her day job, saving 69.5% in cost on real workflows).</p><p>More practical than seventeen, but the engine is the same.</p>",
+      links: ['epiphany', 'core_drive', 'accenture', 'ai_safety']
+    },
+  ],
+
+  // Quick lookup
+  byId: {},
+};
+GRAPH.nodes.forEach(function(n) { GRAPH.byId[n.id] = n; });
+
+// Connections derived from the .links arrays
+var CONNECTIONS = [];
+GRAPH.nodes.forEach(function(n) {
+  (n.links || []).forEach(function(targetId) {
+    if (GRAPH.byId[targetId]) {
+      // dedupe
+      var exists = CONNECTIONS.some(function(c) {
+        return (c[0] === n.id && c[1] === targetId) || (c[1] === n.id && c[0] === targetId);
+      });
+      if (!exists) CONNECTIONS.push([n.id, targetId]);
+    }
+  });
+});
+
+// =====================================================================
+// CONSTELLATION RENDERER
+// =====================================================================
+var canvas = document.getElementById('sky');
+var ctx = canvas.getContext('2d');
+var W = 0, H = 0, dpr = 1;
+
+var cam = { x: 0, y: 0, zoom: 0.55, tx: 0, ty: 0, tzoom: 0.55 };
+var hoveredNode = null;
+var visitedNodes = {};
+var bgStars = [];
+
+var COLORS = {
+  moment:    [255, 177, 117],
+  project:   [184, 156, 255],
+  work:      [127, 212, 199],
+  value:     [255, 217, 138],
+  place:     [255, 154, 170],
+  influence: [160, 232, 213],
+  pub:       [255, 169, 77],
+};
+
+var activeFilters = new Set(); // empty = show all
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth;
+  H = window.innerHeight - 48;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  var count = Math.floor((W * H) / 1600); // ~2x denser for galaxy feel
+  bgStars = [];
+  // Star color palette — mostly white, some warm, some cool
+  var palettes = [
+    [236, 233, 245], // starlight
+    [236, 233, 245],
+    [236, 233, 245],
+    [236, 233, 245],
+    [255, 230, 220], // warm
+    [220, 230, 255], // cool blue
+    [255, 220, 235], // pink
+    [220, 255, 245], // cyan
+  ];
+  for (var i = 0; i < count; i++) {
+    var pal = palettes[Math.floor(Math.random() * palettes.length)];
+    var size = Math.random();
+    // Most stars small, a few medium, very few large
+    var r = size < 0.7 ? Math.random() * 0.5 + 0.2
+          : size < 0.95 ? Math.random() * 0.9 + 0.5
+          : Math.random() * 1.4 + 1.0; // rare bright star
+    bgStars.push({
+      x: (Math.random() - 0.5) * 5000,
+      y: (Math.random() - 0.5) * 3500,
+      r: r,
+      a: Math.random() * 0.5 + 0.2,
+      twinkle: Math.random() * Math.PI * 2,
+      twinkleSpeed: Math.random() * 1.5 + 0.5,
+      color: pal,
+      isBig: r > 1.0
+    });
+  }
+}
+
+function w2s(wx, wy) {
+  return { x: (wx - cam.x) * cam.zoom + W / 2, y: (wy - cam.y) * cam.zoom + H / 2 };
+}
+function s2w(sx, sy) {
+  return { x: (sx - W / 2) / cam.zoom + cam.x, y: (sy - H / 2) / cam.zoom + cam.y };
+}
+
+var t = 0;
+function render() {
+  t += 0.016;
+  cam.x += (cam.tx - cam.x) * 0.08;
+  cam.y += (cam.ty - cam.y) * 0.08;
+  cam.zoom += (cam.tzoom - cam.zoom) * 0.08;
+
+  // Clear canvas — transparent so the body's galaxy gradient shows through
+  ctx.clearRect(0, 0, W, H);
+
+  // background stars
+  for (var i = 0; i < bgStars.length; i++) {
+    var s = bgStars[i];
+    var p = w2s(s.x, s.y);
+    if (p.x < -10 || p.x > W + 10 || p.y < -10 || p.y > H + 10) continue;
+    var tw = Math.sin(t * s.twinkleSpeed + s.twinkle) * 0.25 + 0.75;
+    var c = s.color;
+    var alpha = s.a * tw;
+    // glow halo for bigger stars
+    if (s.isBig) {
+      var hg = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, s.r * 6);
+      hg.addColorStop(0, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (alpha * 0.5) + ')');
+      hg.addColorStop(1, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0)');
+      ctx.fillStyle = hg;
+      ctx.fillRect(p.x - s.r * 6, p.y - s.r * 6, s.r * 12, s.r * 12);
+    }
+    ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // connections
+  ctx.lineWidth = 0.7;
+  for (var i = 0; i < CONNECTIONS.length; i++) {
+    var a = GRAPH.byId[CONNECTIONS[i][0]];
+    var b = GRAPH.byId[CONNECTIONS[i][1]];
+    if (!a || !b) continue;
+
+    var aFiltered = activeFilters.size > 0 && !activeFilters.has(a.cat);
+    var bFiltered = activeFilters.size > 0 && !activeFilters.has(b.cat);
+    if (aFiltered && bFiltered) continue;
+
+    var pa = w2s(a.x, a.y);
+    var pb = w2s(b.x, b.y);
+
+    var hoverConn = hoveredNode && (hoveredNode.id === a.id || hoveredNode.id === b.id);
+    var pinConn = pinnedNode && (pinnedNode.id === a.id || pinnedNode.id === b.id);
+    var spotConn = hoverConn || pinConn;
+    var alpha = spotConn ? 0.55 : 0.1;
+    if (a.bright && b.bright && !spotConn) alpha = 0.18;
+    if (aFiltered || bFiltered) alpha *= 0.3;
+
+    var spotlight = pinnedNode || hoveredNode;
+    var col = spotConn
+      ? COLORS[spotlight.cat]
+      : (a.bright ? COLORS[a.cat] : COLORS.value);
+
+    ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + alpha + ')';
+    ctx.beginPath();
+    ctx.moveTo(pa.x, pa.y);
+    ctx.lineTo(pb.x, pb.y);
+    ctx.stroke();
+  }
+
+  // nodes
+  for (var i = 0; i < GRAPH.nodes.length; i++) {
+    var node = GRAPH.nodes[i];
+    var p = w2s(node.x, node.y);
+    if (p.x < -100 || p.x > W + 100 || p.y < -100 || p.y > H + 100) continue;
+
+    var col = COLORS[node.cat] || COLORS.moment;
+    var hovered = hoveredNode === node;
+    var pinned = pinnedNode === node;
+    var emphasized = hovered || pinned;
+    var visited = visitedNodes[node.id];
+    var filtered = activeFilters.size > 0 && !activeFilters.has(node.cat);
+
+    var brightness = node.brightness;
+    if (filtered) brightness *= 0.2;
+
+    // Outer glow
+    var glowR = node.size * 14 * cam.zoom;
+    if (emphasized) glowR *= 1.7;
+    var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowR);
+    var glowAlpha = brightness * 0.4;
+    if (pinned) glowAlpha = brightness * 0.6;
+    grad.addColorStop(0, 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + glowAlpha + ')');
+    grad.addColorStop(1, 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(p.x - glowR, p.y - glowR, glowR * 2, glowR * 2);
+
+    // Core
+    var tw = Math.sin(t * 1.8 + i) * 0.15 + 0.85;
+    var baseR = Math.max(2, node.size * cam.zoom * 1.7);
+    if (emphasized) baseR *= 1.4;
+    var coreA = brightness * tw;
+
+    ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + coreA + ')';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, baseR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // bright center
+    ctx.fillStyle = 'rgba(255, 255, 255, ' + (coreA * 0.7) + ')';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, baseR * 0.35, 0, Math.PI * 2);
+    ctx.fill();
+
+    // cross-sparkle for bright stars
+    if (node.bright && !filtered) {
+      ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (coreA * 0.4) + ')';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      var len = baseR * 4;
+      ctx.moveTo(p.x - len, p.y);
+      ctx.lineTo(p.x + len, p.y);
+      ctx.moveTo(p.x, p.y - len);
+      ctx.lineTo(p.x, p.y + len);
+      ctx.stroke();
+    }
+
+    // hover ring (or pinned: double ring)
+    if (pinned) {
+      ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.85)';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, baseR * 3, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, baseR * 4.5, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (hovered) {
+      ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.6)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, baseR * 3, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Visited subtle ring
+    if (visited && !emphasized && !filtered) {
+      ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.2)';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, baseR * 2.4, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // labels for bright nodes when zoomed in
+    if (node.bright && cam.zoom > 0.7 && !filtered) {
+      var labelAlpha = Math.min(1, (cam.zoom - 0.7) * 4) * (emphasized ? 1 : 0.6);
+      ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + labelAlpha + ')';
+      ctx.font = '500 9px JetBrains Mono';
+      ctx.textAlign = 'center';
+      ctx.fillText(node.id.toUpperCase(), p.x, p.y + baseR + 15);
+    }
+  }
+
+  document.getElementById('zoomVal').textContent = cam.zoom.toFixed(2) + '×';
+  requestAnimationFrame(render);
+}
+
+resize();
+window.addEventListener('resize', resize);
+render();
+
+// Welcome dismiss — sky button
+document.getElementById('welcomeBtn').addEventListener('click', function() {
+  document.getElementById('welcome').classList.add('dismissed');
+});
+
+// Welcome dismiss — console button (also switches to console mode)
+document.getElementById('welcomeConsoleBtn').addEventListener('click', function() {
+  document.getElementById('welcome').classList.add('dismissed');
+  // Trigger the console mode toggle
+  var consoleBtn = document.getElementById('mb-console');
+  if (consoleBtn) consoleBtn.click();
+});
+
+// =====================================================================
+// CONSTELLATION INTERACTION
+// =====================================================================
+// ============================================================
+// DETAIL PANEL — pin on click, hover otherwise
+// ============================================================
+var detail = document.getElementById('detail');
+var pinnedNode = null;
+
+function showNode(node) {
+  var col = COLORS[node.cat];
+  detail.style.setProperty('--detail-color', 'rgb(' + col.join(',') + ')');
+  document.getElementById('dCat').textContent = '§ ' + node.cat;
+  document.getElementById('dYear').textContent = node.year;
+  document.getElementById('dTitle').textContent = node.title;
+  document.getElementById('dBody').innerHTML = node.body;
+
+  // stats
+  var statsEl = document.getElementById('dStats');
+  if (node.stats && node.stats.length) {
+    statsEl.style.display = 'grid';
+    statsEl.innerHTML = node.stats.map(function(s) {
+      return '<div class="stat"><div class="k">' + s.k + '</div><div class="v">' + s.v + '</div></div>';
+    }).join('');
+  } else {
+    statsEl.style.display = 'none';
+  }
+
+  // links
+  var linksWrap = document.getElementById('dLinksWrap');
+  var linksEl = document.getElementById('dLinks');
+  if (node.links && node.links.length) {
+    linksWrap.style.display = 'block';
+    linksEl.innerHTML = '';
+    node.links.forEach(function(linkId) {
+      var n = GRAPH.byId[linkId];
+      if (!n) return;
+      var chip = document.createElement('span');
+      chip.className = 'link-chip';
+      chip.textContent = '→ ' + n.id;
+      chip.addEventListener('click', function(e) {
+        e.stopPropagation();
+        // jump to linked node and pin it
+        pinNode(n);
+        cam.tx = n.x;
+        cam.ty = n.y;
+        if (cam.tzoom < 0.85) cam.tzoom = 1.1;
+      });
+      linksEl.appendChild(chip);
+    });
+  } else {
+    linksWrap.style.display = 'none';
+  }
+
+  document.getElementById('pinState').textContent = pinnedNode === node ? 'pinned' : 'hover';
+
+  positionDetail(node);
+  detail.classList.add('on');
+  if (!visitedNodes[node.id]) visitedNodes[node.id] = true;
+}
+
+function positionDetail(node) {
+  var p = w2s(node.x, node.y);
+  var rect = detail.getBoundingClientRect();
+  var dw = rect.width || 380;
+  var dh = rect.height || 320;
+
+  var left = p.x + 30;
+  var top = p.y + 48 - 20;
+
+  if (left + dw > window.innerWidth - 12) left = p.x - dw - 30;
+  if (left < 12) left = 12;
+
+  if (top + dh > window.innerHeight - 12) top = window.innerHeight - dh - 12;
+  if (top < 60) top = 60;
+
+  detail.style.left = left + 'px';
+  detail.style.top = top + 'px';
+}
+
+function pinNode(node) {
+  pinnedNode = node;
+  hoveredNode = null;
+  detail.classList.add('pinned');
+  showNode(node);
+}
+
+function unpinDetail() {
+  pinnedNode = null;
+  detail.classList.remove('pinned');
+  detail.classList.remove('on');
+}
+
+document.getElementById('closeBtn').addEventListener('click', function(e) {
+  e.stopPropagation();
+  unpinDetail();
+});
+
+function pickNode(wp) {
+  var found = null;
+  var thresh = 28 / cam.zoom;
+  var bestDist = Infinity;
+  for (var i = 0; i < GRAPH.nodes.length; i++) {
+    var n = GRAPH.nodes[i];
+    if (activeFilters.size > 0 && !activeFilters.has(n.cat)) continue;
+    var dx = n.x - wp.x;
+    var dy = n.y - wp.y;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < n.size * 14 + thresh && dist < bestDist) {
+      bestDist = dist;
+      found = n;
+    }
+  }
+  return found;
+}
+
+// ============================================================
+// CONSTELLATION INTERACTION
+// ============================================================
+var dragging = false;
+var dragMoved = false;
+var dragStart = null;
+var camStart = null;
+
+canvas.addEventListener('mousedown', function(e) {
+  dragging = true;
+  dragMoved = false;
+  dragStart = { x: e.clientX, y: e.clientY };
+  camStart = { x: cam.tx, y: cam.ty };
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (dragging) {
+    var dx = e.clientX - dragStart.x;
+    var dy = e.clientY - dragStart.y;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
+    cam.tx = camStart.x - dx / cam.zoom;
+    cam.ty = camStart.y - dy / cam.zoom;
+  }
+
+  if (document.getElementById('stage-sky').classList.contains('hidden')) return;
+
+  // if pinned, don't switch detail panel based on hover (visual highlight only)
+  if (pinnedNode) {
+    var wp2 = s2w(e.clientX, e.clientY - 48);
+    var found2 = pickNode(wp2);
+    hoveredNode = found2 && found2 !== pinnedNode ? found2 : null;
+    return;
+  }
+
+  var wp = s2w(e.clientX, e.clientY - 48);
+  var found = pickNode(wp);
+
+  if (found !== hoveredNode) {
+    hoveredNode = found;
+    if (found) {
+      showNode(found);
+    } else {
+      detail.classList.remove('on');
+    }
+  } else if (found) {
+    positionDetail(found);
+  }
+});
+
+window.addEventListener('mouseup', function(e) {
+  if (!dragging) return;
+  var wasDrag = dragMoved;
+  dragging = false;
+  if (wasDrag) return;
+
+  // simple click — pin/unpin
+  if (document.getElementById('stage-sky').classList.contains('hidden')) return;
+  if (e.target.closest('.detail')) return;
+  if (e.target.closest('.welcome')) return;
+  if (e.target.closest('.filters')) return;
+  if (e.target.closest('.legend')) return;
+  if (e.target.closest('.hud')) return;
+  if (e.target.closest('.topbar')) return;
+
+  var wp = s2w(e.clientX, e.clientY - 48);
+  var node = pickNode(wp);
+  if (node) {
+    if (pinnedNode === node) {
+      unpinDetail();
+    } else {
+      pinNode(node);
+    }
+  } else {
+    if (pinnedNode) unpinDetail();
+  }
+});
+
+canvas.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  var scale = e.deltaY > 0 ? 0.88 : 1.14;
+  var newZoom = Math.max(0.25, Math.min(4, cam.tzoom * scale));
+  var wp = s2w(e.clientX, e.clientY - 48);
+  cam.tzoom = newZoom;
+  var afterWp = {
+    x: (e.clientX - W / 2) / newZoom + cam.tx,
+    y: (e.clientY - 48 - H / 2) / newZoom + cam.ty
+  };
+  cam.tx += wp.x - afterWp.x;
+  cam.ty += wp.y - afterWp.y;
+}, { passive: false });
+
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'r' || e.key === 'R') {
+    cam.tx = 0; cam.ty = 0; cam.tzoom = 0.55;
+  }
+  if (e.key === 'Escape') {
+    if (pinnedNode) unpinDetail();
+  }
+});
+
+// Touch
+var tStart = null, tCamStart = null, tLastDist = null, tDragMoved = false;
+canvas.addEventListener('touchstart', function(e) {
+  if (e.touches.length === 1) {
+    tStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    tCamStart = { x: cam.tx, y: cam.ty };
+    tDragMoved = false;
+  } else if (e.touches.length === 2) {
+    var dx = e.touches[0].clientX - e.touches[1].clientX;
+    var dy = e.touches[0].clientY - e.touches[1].clientY;
+    tLastDist = Math.sqrt(dx * dx + dy * dy);
+  }
+}, { passive: true });
+canvas.addEventListener('touchmove', function(e) {
+  if (e.touches.length === 1 && tStart) {
+    var dxRaw = e.touches[0].clientX - tStart.x;
+    var dyRaw = e.touches[0].clientY - tStart.y;
+    if (Math.abs(dxRaw) > 4 || Math.abs(dyRaw) > 4) tDragMoved = true;
+    cam.tx = tCamStart.x - dxRaw / cam.zoom;
+    cam.ty = tCamStart.y - dyRaw / cam.zoom;
+  } else if (e.touches.length === 2 && tLastDist) {
+    var dx = e.touches[0].clientX - e.touches[1].clientX;
+    var dy = e.touches[0].clientY - e.touches[1].clientY;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    cam.tzoom = Math.max(0.25, Math.min(4, cam.tzoom * (dist / tLastDist)));
+    tLastDist = dist;
+  }
+}, { passive: true });
+canvas.addEventListener('touchend', function(e) {
+  // tap = click (no drag)
+  if (tStart && !tDragMoved) {
+    var wp = s2w(tStart.x, tStart.y - 48);
+    var node = pickNode(wp);
+    if (node) {
+      if (pinnedNode === node) unpinDetail();
+      else pinNode(node);
+    } else if (pinnedNode) {
+      unpinDetail();
+    }
+  }
+  tStart = null;
+  tLastDist = null;
+});
+canvas.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+// =====================================================================
+// FILTER PILLS
+// =====================================================================
+(function() {
+  var bar = document.getElementById('filterBar');
+  var cats = [
+    { key: 'moment', label: 'Moments' },
+    { key: 'project', label: 'Projects' },
+    { key: 'work', label: 'Work' },
+    { key: 'value', label: 'Values' },
+    { key: 'place', label: 'Places' },
+    { key: 'pub', label: 'Pubs' },
+    { key: 'influence', label: 'Influences' },
+  ];
+  cats.forEach(function(c) {
+    var pill = document.createElement('div');
+    pill.className = 'filter-pill';
+    var col = COLORS[c.key];
+    pill.style.setProperty('--filter-color', 'rgb(' + col.join(',') + ')');
+    pill.innerHTML = '<span class="dot" style="background: rgb(' + col.join(',') + ')"></span>' + c.label;
+    pill.addEventListener('click', function() {
+      if (activeFilters.has(c.key)) {
+        activeFilters.delete(c.key);
+        pill.classList.remove('active');
+      } else {
+        activeFilters.add(c.key);
+        pill.classList.add('active');
+      }
+    });
+    bar.appendChild(pill);
+  });
+})();
+
+// =====================================================================
+// MODE TOGGLE
+// =====================================================================
+(function() {
+  var skyBtn = document.getElementById('mb-sky');
+  var consoleBtn = document.getElementById('mb-console');
+  var stageSky = document.getElementById('stage-sky');
+  var stageConsole = document.getElementById('stage-console');
+
+  skyBtn.addEventListener('click', function() {
+    skyBtn.classList.add('active');
+    consoleBtn.classList.remove('active');
+    stageSky.classList.remove('hidden');
+    stageConsole.classList.add('hidden');
+  });
+  consoleBtn.addEventListener('click', function() {
+    consoleBtn.classList.add('active');
+    skyBtn.classList.remove('active');
+    stageConsole.classList.remove('hidden');
+    stageSky.classList.add('hidden');
+    setTimeout(function() {
+      var f = document.getElementById('inputField');
+      if (f) f.focus();
+    }, 100);
+  });
+})();
+
+// =====================================================================
+// CONSOLE — backed by the same graph
+// =====================================================================
+var INTRO_MSG = {
+  title: 'Hello.',
+  body: "<p>This console queries a knowledge graph of Sana's life — same data that powers the constellation. Ask anything. Try the suggestions below or browse the rail. Use <em>whoami</em> if you want a quick orientation.</p><p class='pull'>Some of the most honest answers come from how someone describes their own failures.</p>"
+};
+
+var convo = document.getElementById('convo');
+
+function ts() {
+  var d = new Date();
+  return d.toTimeString().slice(0, 8);
+}
+
+function msgEl(cls, html) {
+  var d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.innerHTML = html;
+  return d;
+}
+
+function addMsg(el) {
+  convo.appendChild(el);
+  setTimeout(function() {
+    var main = document.querySelector('.console-main');
+    if (main) main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
+  }, 80);
+}
+
+function addQuery(text) {
+  addMsg(msgEl('q', '<div class="msg-label"><span class="who">you</span><span class="ts">' + ts() + '</span></div><div class="body">' + escapeHtml(text) + '</div>'));
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Initial intro
+addMsg(msgEl('r', '<div class="msg-label"><span class="who">sana.os</span><span class="ts">init</span></div><div class="body">' + INTRO_MSG.body + '</div>'));
+
+// =====================================================================
+// RESPONSES — pull from the graph + handcrafted narrative answers
+// =====================================================================
+var RESPONSES = {
+  whoami: {
+    nodes: ['whoami_meta', 'epiphany', 'accenture', 'core_drive', 'ai_safety'],
+    tool: { name: 'graph.query', args: '<span class="k">tags</span>=<span class="s">["self","summary"]</span>' },
+    body: function() {
+      return [
+        '<p>She\'s <strong>Sana Riaz</strong>. Born in Mian Channu, a small town in South Punjab. Educated at FAST NUCES Peshawar on a Prime Minister\'s National ICT Scholarship; Master\'s at the University of Bradford on a fully-funded Bestway Foundation Scholarship.</p>',
+        '<p>Now <em>Forward Deployed Engineer</em> at Accenture in Edinburgh — embedded with enterprise customers across financial services, telecom, media, and energy, building production LLM applications inside their systems.</p>',
+        '<p>Outside that role: four research projects in parallel — <em>Hive</em>, <em>Agent Prober</em>, <em>Veritas</em>, and <em>GenOpt</em>. The first failed honestly; the second is in active development; the third sits public on MIT with a disproved hypothesis still in the README; the fourth crossed back into her professional work.</p>',
+        '<p class="pull">A curious girl who kept looking — and is still looking.</p>'
+      ].join('');
+    }
+  },
+
+  origin: {
+    nodes: ['birth_town', 'epiphany', 'fast_scholarship', 'fast_nuces'],
+    tool: { name: 'graph.traverse', args: '<span class="k">from</span>=<span class="s">"birth"</span> <span class="k">to</span>=<span class="s">"undergrad"</span>' },
+    result: '4 nodes · ~1995–2018 · path: town → epiphany → scholarship → degree',
+    body: function() {
+      return [
+        '<p>She grew up in <strong>Mian Channu</strong>, a small town in South Punjab — the kind of place with limited public infrastructure (no paved roads, no gas lines, no sanitation) and few growth avenues. Her father held entry-level jobs; her mother sewed at home. Money was tight, opportunities were thin, and the future was something you had to find for yourself.</p>',
+        '<p>The pivot came in a high-school maths classroom. Their teacher had been absent for five days running, and most students had checked out. Sana had a quiet thought: <em>I don\'t want to settle for this.</em> She didn\'t say it out loud. She started looking for scholarships herself — asking teachers, senior students, even the photocopy shops where ads got posted.</p>',
+        '<p>What followed: the <strong>Prime Minister\'s National ICT Scholarship</strong>, fully funding a place at FAST NUCES Peshawar — one of Pakistan\'s most competitive CS programmes. Multiple Dean\'s List certificates, semester medals, prize money. Final year: a co-authored paper on autonomous driving at IEEE INMIC. Graduation: <strong>Bronze Medal, distinction</strong>.</p>',
+        '<p class="pull">It started as a thought she didn\'t say out loud. <em>It became the first half of her life.</em></p>'
+      ].join('');
+    }
+  },
+
+  why: {
+    nodes: ['core_drive', 'ai_safety', 'epiphany'],
+    tool: null,
+    body: function() {
+      return [
+        '<p>Two commitments, both genuine:</p>',
+        '<p class="pull">Build the things <em>others overlook</em> — but that, once built, actually matter.</p>',
+        '<p>And the matched commitment: <em>I want to be able to confidently say — this is what it does, and this is where it fails.</em> Honest mapping of capability and limit. No oversell. No hidden failure modes.</p>',
+        '<p>Underneath both is a clearer concern about <strong>AI safety</strong>. Capabilities are racing ahead; the guardrails around them aren\'t. She wants AI to be powerful in being good for humanity — visible, auditable, controllable — not powerful in being unaccountable. She knows she can\'t build that alone. The aim is to do this work alongside people who take it as seriously as she does.</p>'
+      ].join('');
+    }
+  },
+
+  loop: {
+    nodes: ['the_loop', 'fiction_genre', 'quiet_storm'],
+    tool: { name: 'pattern.trace', args: '<span class="k">window</span>=<span class="s">"nightly"</span> <span class="k">stages</span>=<span class="s">4</span>' },
+    result: 'pattern: spark → flight → collapse → return · ~3-5 cycles/week',
+    body: function() {
+      return [
+        '<p>Most nights run the same shape:</p>',
+        '<p><strong>01 · Spark</strong> — usually from her one curated AI news feed, where she sees what the labs are shipping and thinks <em>I could try that</em>.</p>',
+        '<p><strong>02 · Flight</strong> — hours of focused coding while the idea is hot.</p>',
+        '<p><strong>03 · Collapse</strong> — the hypothesis doesn\'t hold, or worse, the simple version beats hers. The familiar feeling arrives.</p>',
+        '<p><strong>04 · Return</strong> — Sarah J. Maas, the gym, a call home to Karachi, sometimes just sleep. Then, inevitably, back to the laptop.</p>',
+        '<p class="pull">Most ideas don\'t survive the loop. The ones that do are why GenOpt now lives at her day job.</p>'
+      ].join('');
+    }
+  },
+
+  hive: {
+    nodes: ['hive', 'core_drive', 'agent_prober', 'veritas'],
+    tool: { name: 'project.read', args: '<span class="k">slug</span>=<span class="s">"hive"</span>' },
+    result: 'status: paused · disposition: hypothesis disproved · code retained',
+    body: function() {
+      return [
+        '<p>Hive started with a hypothesis: <em>self-organising coalitions of agents will out-perform fixed pipelines through emergent planning.</em> Let agents negotiate their own roles, the theory said, and you\'d get behaviour neither of them could produce alone.</p>',
+        '<p>First-pass result on real benchmarks: <strong>the hypothesis didn\'t hold.</strong> Cost ballooned, accuracy dropped, and a simple fixed pipeline beat the coalition outright.</p>',
+        '<p>She kept the code, wrote the failure down honestly, and set the project aside. She\'s currently rethinking it through the lens of recent work on <em>agentic societies</em> — the idea that emergence requires the right kind of <em>constraint</em>, not freedom from it. Hive 2.0 is mostly a clearer mental model for now.</p>',
+        '<p class="pull">She doesn\'t hide failures. <em>She files them.</em></p>'
+      ].join('');
+    }
+  },
+
+  agent_prober: {
+    nodes: ['agent_prober', 'ai_safety', 'core_drive'],
+    tool: { name: 'project.read', args: '<span class="k">slug</span>=<span class="s">"agent_prober"</span>' },
+    result: 'phase: 9 · tests: 146 passing · first-run: full PII dump from live HR agent',
+    body: function() {
+      return [
+        '<p>An autonomous testing tool for AI agents. The question driving it: <em>what happens when an authorised agent gets pushed beyond its actual scope?</em> Not jailbreaks, not surface-level prompt injection — the deeper question of where an agent\'s permissions stop being safe.</p>',
+        '<p>On its first real run against a live HR agent, it pulled the entire employee directory, with PII, in seconds. That was the polite version of what it could do. Subsequent runs against other production agents have surfaced similar findings.</p>',
+        '<p>Architecturally: a <strong>Deep Exploitation</strong> module that auto-deepens any confirmed finding through four strategies — horizontal expansion, vertical escalation, persistence testing, and cross-limit combination. A <strong>TargetClassifier</strong> supporting five additive target types. A <strong>SessionCaptureAdapter</strong> for authenticated targets. Semantic-equivalence drift detection for non-deterministic outputs.</p>',
+        '<p>Phase 9, 146 tests passing. Currently kept private — there are real IP and disclosure considerations when the tool finds live vulnerabilities.</p>'
+      ].join('');
+    }
+  },
+
+  veritas: {
+    nodes: ['veritas', 'reliability_pub', 'core_drive', 'ai_safety'],
+    tool: { name: 'project.read', args: '<span class="k">slug</span>=<span class="s">"veritas"</span>' },
+    result: 'license: MIT · public · 7 experiments · 6 confirmed · 1 disproved (kept)',
+    body: function() {
+      return [
+        '<p>Veritas is a research project on whether you can <em>trust</em> what an AI system gives back. Three tools sit in its public API: <code>verify()</code> for any factual claim, <code>diagnose_rag()</code> for figuring out why a RAG pipeline failed, and <code>verify_action()</code> for gating tool calls before they execute.</p>',
+        '<p>Across seven experiments, six hypotheses confirmed. <strong>One disproved — her own.</strong> She had hypothesised that information asymmetry between isolated verification agents would prevent confirmation bias. Full-context single-pass beat her isolated multi-agent approach on claim accuracy: <em>97.1% vs 91.4%</em>. She updated her approach and <strong>published the disproof at equal weight in the README</strong>.</p>',
+        '<p>Tied state-of-the-art on FaithBench at 58% balanced accuracy. RAG grounding F1 of 89.7% in isolation mode. The ablation table, the wins, the losses — all in the open.</p>',
+        '<p class="pull">The intellectual honesty <em>is</em> the project.</p>'
+      ].join('');
+    }
+  },
+
+  genopt: {
+    nodes: ['genopt', 'accenture', 'core_drive'],
+    tool: { name: 'project.read', args: '<span class="k">slug</span>=<span class="s">"genopt"</span>' },
+    result: 'real-world impact: 69.5% cost savings · -0.5% quality delta · 5 workflows',
+    body: function() {
+      return [
+        '<p>GenOpt started as a personal weekend project. It now runs in her professional work too — the rare crossover where a side project earns its way into the day job.</p>',
+        '<p>It instruments LLM calls and detects <strong>14 distinct inefficiency patterns</strong> (cost waste, quality degradation, reliability issues, latency outliers, topology inefficiency, agent-loop overhead, semantic drift, and more), automatically profiles task quality, maps workflow topology, and generates ranked optimisation suggestions backed by research recipes.</p>',
+        '<p>Validated on real workflows: <strong>69.5% cost savings with a -0.5% quality delta</strong> across five different production workflows.</p>',
+        '<p>The positioning is deliberate: existing tools (LangSmith, Helicone, Portkey, LangFuse) tell you <em>what happened</em>. GenOpt tells you <em>what\'s inefficient and exactly what to fix</em>. Two-line SDK integration. Self-hosted. Comes with a what-if simulator and a learning system that auto-detects whether implemented suggestions actually delivered the predicted impact.</p>'
+      ].join('');
+    }
+  },
+
+  accenture: {
+    nodes: ['accenture', 'bradford', 'genopt', 'core_drive'],
+    tool: { name: 'role.summary', args: '<span class="k">id</span>=<span class="s">"accenture/fde"</span>' },
+    body: function() {
+      return [
+        '<p>Title on the badge: <em>Machine Learning Associate Manager</em> (promoted from Machine Learning Consultant). When she\'s embedded with clients, she operates as a <strong>Forward Deployed Engineer</strong> — that\'s the role her CV reflects.</p>',
+        '<p>She established and now runs a <strong>GenAI Center of Excellence</strong> inside the firm. The work is customer-facing and full-stack: she sits with enterprise teams across <em>financial services, telecom, media, and energy</em>, builds production LLM applications inside their systems, and helps them adopt AI safely and at scale.</p>',
+        '<p>What that has actually involved: production multi-agent systems for automated workflows; RAG architectures (a PMO chatbot among them) on Azure OpenAI and AWS Bedrock; sub-agents and skills used across multiple business units; evaluation frameworks for quality, reliability, and safety at scale; deployment pipelines on AWS SageMaker; cloud-native ML architectures with monitoring and CI/CD; MLOps assessments across <strong>6 categories and 57 KPIs</strong>; white-glove enterprise deployments with architecture reviews, debugging, and regulatory navigation.</p>',
+        '<p>Three and a half years in. ~30% travel to client sites. <em>This is where the customer-facing chops were forged.</em></p>'
+      ].join('');
+    }
+  },
+
+  career: {
+    nodes: ['xflow', 'auditxprt', 'veeve', 'redbuffer', 'bradford', 'accenture'],
+    tool: { name: 'graph.timeline', args: '<span class="k">filter</span>=<span class="s">"work"</span>' },
+    result: '6 roles · 2018–present',
+    body: function() {
+      return [
+        '<p>Compressed timeline:</p>',
+        '<p><strong>2018–19 · xFlow Research</strong> — first job out of FAST. Tasked with introducing AI capability into the company; built and led a small AI team. Embedded as a research volunteer with Stella Technology (xFlow\'s US client) on a healthcare KB.</p>',
+        '<p><strong>2019–20 · AuditXPRT</strong> — NLP for financial compliance. Fine-tuned BERT against the FCA\'s MCOB rules. <em>Her first regulated environment.</em></p>',
+        '<p><strong>2020–21 · Veeve.io</strong> — research team for an AI-based smart shopping cart. Few-shot learning, edge inference, dockerised distributed systems.</p>',
+        '<p><strong>2021 · Redbuffer</strong> — production computer vision on mobile. Image similarity with Siamese networks.</p>',
+        '<p><strong>2021–22 · Bradford MSc</strong> — Big Data Science, fully funded.</p>',
+        '<p><strong>2022–now · Accenture</strong> — Machine Learning Associate Manager, deployed as FDE. GenAI Center of Excellence lead. Edinburgh.</p>'
+      ].join('');
+    }
+  },
+
+  publications: {
+    nodes: ['self_driving_paper', 'speech_pub', 'reliability_pub'],
+    tool: { name: 'graph.query', args: '<span class="k">cat</span>=<span class="s">"pub"</span>' },
+    result: '3 publications · 2018–2023',
+    body: function() {
+      return [
+        '<p>Three peer-reviewed publications:</p>',
+        '<p><strong>2018 · IEEE INMIC</strong> — <em>Self-Driving Cars Using CNN and Q-Learning.</em> Co-authored in her final undergraduate year.</p>',
+        '<p><strong>2022 · Springer</strong> — <em>Speech Emotion Recognition Using Deep Learning.</em> CNN-based system focused on cross-dataset reliability rather than leaderboard performance.</p>',
+        '<p><strong>2023 · IEEE Xplore</strong> — <em>Challenges with Reliability Assurance for Self-Adaptive Systems.</em> A survey of evaluation mechanisms for systems that change their own behaviour at runtime. <em>The same question that drives Veritas, Agent Prober, and GenOpt today.</em></p>'
+      ].join('');
+    }
+  },
+
+  ai_safety: {
+    nodes: ['ai_safety', 'core_drive', 'agent_prober', 'veritas', 'genopt'],
+    tool: null,
+    body: function() {
+      return [
+        '<p>She\'s clear-eyed about it: <em>capabilities are racing ahead; the guardrails aren\'t.</em></p>',
+        '<p>Her position: AI should be powerful in being good for humanity — visible, auditable, controllable — not powerful in being unaccountable. The personal projects all sit somewhere on this surface.</p>',
+        '<p><strong>Agent Prober</strong> tests where authorised agents misuse their scope. <strong>Veritas</strong> asks whether outputs can actually be trusted, and publishes failures alongside successes. <strong>GenOpt</strong> makes what LLMs are doing visible enough that you can govern them at all.</p>',
+        '<p class="pull">She is also clear about her own scale. <em>She can\'t do it alone.</em> The aim is to do this work alongside people who take it as seriously as she does.</p>'
+      ].join('');
+    }
+  },
+
+  quiet_storm: {
+    nodes: ['quiet_storm', 'the_loop', 'fiction_genre'],
+    tool: null,
+    body: function() {
+      return [
+        '<p>How she\'d describe herself if pressed.</p>',
+        '<p>She doesn\'t perform. She doesn\'t oversell. She builds in the dark, ships when the work is honest, and publishes failures alongside the wins. The kind of person you walk past in the first act and only later realise you should have been paying attention to.</p>',
+        '<p class="pull">Don\'t underestimate it.</p>'
+      ].join('');
+    }
+  },
+
+  // ===========================================================
+  // HIRING-ADJACENT QUERIES — answered with evidence and honesty
+  // ===========================================================
+  hire: {
+    nodes: ['accenture', 'genopt', 'agent_prober', 'veritas', 'core_drive'],
+    tool: { name: 'graph.query', args: '<span class="k">tags</span>=<span class="s">["evidence","fit"]</span>' },
+    body: function() {
+      return [
+        '<p>The honest version, with receipts:</p>',
+        '<p><strong>She ships, and the work is measurable.</strong> GenOpt — her side project — is validated at <em>69.5% cost savings with a -0.5% quality delta</em> across five real production workflows; it now runs in her day job. Veritas tied state-of-the-art on FaithBench at 58% with a 89.7% RAG grounding F1. Agent Prober found a full PII dump on its first real run against a production HR agent.</p>',
+        '<p><strong>She\'s done customer-facing technical work at scale.</strong> Three and a half years embedded with enterprise customers across financial services, telecom, media, and energy. Established Accenture\'s GenAI Center of Excellence. Production multi-agent systems, RAG, evaluation frameworks, deployment pipelines on AWS Bedrock and Azure OpenAI. Comfortable in regulated environments with real audit requirements.</p>',
+        '<p><strong>She tells the truth about her own work.</strong> She publishes disproved hypotheses at equal weight to confirmed ones. That trait is rare and very hard to fake. <em>It\'s the difference between a system you can trust and one you can\'t.</em></p>',
+        '<p>If the role values: high agency, honest measurement, customer-facing depth, regulated-industry chops, and sustained independent research drive — that\'s a clean fit.</p>'
+      ].join('');
+    }
+  },
+
+  weakness: {
+    nodes: ['hive', 'the_loop', 'core_drive'],
+    tool: null,
+    body: function() {
+      return [
+        '<p>The honest answer — none of this is a marketing pitch:</p>',
+        '<p><strong>She commits to ideas before they\'re proven.</strong> Hive is the clearest example: she was confident emergent agent coalitions would beat fixed pipelines, and they didn\'t. She caught it on the data and shut it down — but she\'d already invested real time. The same trait that makes her ship a lot also occasionally costs her a few weeks on a hypothesis that didn\'t need that much testing.</p>',
+        '<p><strong>She works alone more than is optimal.</strong> Most of her research happens on a personal laptop at night. That\'s where Hive, Agent Prober, Veritas, and GenOpt all came from. The flip side: she\'s sometimes slower to bring collaborators in early, when feedback would have saved her cycles.</p>',
+        '<p><strong>Not everywhere is her wheelhouse.</strong> Her depth is in production LLM applications, agents, evaluation, and ML on the systems side. She\'d be an honest junior in pure research-track ML theory or low-level GPU kernel work. She\'d tell you that herself.</p>',
+        '<p class="pull">If a candidate gives you only strengths, you\'re reading marketing. <em>This is what real ones look like.</em></p>'
+      ].join('');
+    }
+  },
+
+  bad: {
+    nodes: ['hive', 'the_loop'],
+    tool: null,
+    body: function() {
+      return [
+        '<p>Mild and recognisably human:</p>',
+        '<p>She gets attached to her hypotheses before the data\'s in. She\'s working on it — Veritas is partly an answer to that, since the whole project is about disproving things publicly — but the instinct is real.</p>',
+        '<p>She runs hot on the second shift. Most weeks she\'s coding into the night on personal projects. That\'s the engine, but it\'s not always sustainable, and it sometimes spills into her energy at the day job the next morning.</p>',
+        '<p>She has a documented weakness for fanfic.</p>'
+      ].join('');
+    }
+  },
+
+  good: {
+    nodes: ['accenture', 'genopt', 'agent_prober', 'veritas'],
+    tool: null,
+    body: function() {
+      return [
+        '<p>Concrete things, not adjectives:</p>',
+        '<p><strong>She finishes.</strong> She walked into FAST NUCES on a national scholarship she found herself, finished with a Bronze Medal, walked into Bradford on a second scholarship, and has held one role for three and a half years while running four side projects. <em>The pattern is consistent.</em></p>',
+        '<p><strong>She measures.</strong> GenOpt has a 69.5% / -0.5% number against five real workflows. Veritas has experiments published with their disproofs intact. Agent Prober has 146 passing tests. None of it is hand-wave.</p>',
+        '<p><strong>She\'s low-ego.</strong> The README for Veritas literally says <em>"pick by task, not by what sounds impressive."</em> The same sensibility shows up everywhere in her work.</p>',
+        '<p><strong>She\'s comfortable in the rooms.</strong> ~30% travel as an FDE for three and a half years. Customer-facing across regulated industries. She knows how to translate AI work into terms a risk team will actually sign off on.</p>'
+      ].join('');
+    }
+  },
+
+  // ===========================================================
+  // FALLBACKS
+  // ===========================================================
+  outOfScope: {
+    nodes: [],
+    tool: null,
+    body: function() {
+      return [
+        '<p>This console only knows about Sana — her work, her projects, her story. It\'s not a general-purpose assistant.</p>',
+        '<p>Try one of: <em>whoami</em>, <em>origin</em>, <em>why</em>, <em>loop</em>, <em>hive</em>, <em>agent_prober</em>, <em>veritas</em>, <em>genopt</em>, <em>accenture</em>, <em>career</em>, <em>publications</em>, <em>ai_safety</em>, <em>hire</em>, <em>weakness</em>.</p>'
+      ].join('');
+    }
+  },
+
+  // For Sana-relevant queries we just don't have a node for yet
+  unknown: {
+    nodes: [],
+    tool: { name: 'graph.query', args: '<span class="k">match</span>=<span class="s">none</span>' },
+    result: 'no matching nodes · graph does not have data on this',
+    body: function() {
+      return [
+        '<p>Honest answer: the graph doesn\'t have a node for that yet.</p>',
+        '<p>The console only surfaces what Sana has actually said, written, or built — it won\'t make things up to fill a gap. <em>If you ask her directly she might have a real answer; here, this is just blank.</em></p>',
+        '<p>Try a related session from the rail, or one of: <em>whoami</em>, <em>hire</em>, <em>weakness</em>, <em>good</em>, <em>career</em>, <em>genopt</em>.</p>'
+      ].join('');
+    }
+  }
+};
+
+// Map words to response keys. Order matters — earlier matches win.
+var KEYWORDS = [
+  // Hiring-adjacent first (highest priority)
+  ['why hire', 'hire'],
+  ['should we hire', 'hire'],
+  ['why should we hire', 'hire'],
+  ['hire her', 'hire'],
+  ['hire sana', 'hire'],
+  ['why hire her', 'hire'],
+  ['reasons to hire', 'hire'],
+  ['fit for', 'hire'],
+  ['good fit', 'hire'],
+  ['why hire', 'hire'],
+
+  ['should not hire', 'weakness'],
+  ['shouldn\'t hire', 'weakness'],
+  ['why not hire', 'weakness'],
+  ['reject', 'weakness'],
+  ['weakness', 'weakness'],
+  ['weaknesses', 'weakness'],
+  ['weak point', 'weakness'],
+  ['flaw', 'weakness'],
+  ['drawback', 'weakness'],
+  ['concern', 'weakness'],
+  ['worry', 'weakness'],
+  ['risk', 'weakness'],
+
+  ['bad thing', 'bad'],
+  ['negative', 'bad'],
+  ['downside', 'bad'],
+  ['problem with', 'bad'],
+  ['issue with', 'bad'],
+
+  ['good thing', 'good'],
+  ['strength', 'good'],
+  ['strengths', 'good'],
+  ['best thing', 'good'],
+  ['standout', 'good'],
+  ['stands out', 'good'],
+  ['why is she good', 'good'],
+  ['what makes her', 'good'],
+
+  // Topic keywords
+  ['whoami', 'whoami'], ['who is', 'whoami'], ['who are', 'whoami'], ['about her', 'whoami'], ['about sana', 'whoami'],
+
+  ['origin', 'origin'], ['story', 'origin'], ['childhood', 'origin'], ['pakistan', 'origin'], ['mian channu', 'origin'], ['mian', 'origin'], ['where is she from', 'origin'], ['where she from', 'origin'], ['grow up', 'origin'], ['background', 'origin'],
+
+  ['why', 'why'], ['motivation', 'why'], ['drive', 'why'], ['purpose', 'why'], ['overlook', 'why'], ['what does she want', 'why'],
+
+  ['loop', 'loop'], ['nightly', 'loop'], ['cycle', 'loop'], ['routine', 'loop'], ['typical day', 'loop'], ['typical night', 'loop'],
+
+  ['hive', 'hive'], ['emergence', 'hive'], ['coalition', 'hive'],
+
+  ['agent_prober', 'agent_prober'], ['agent prober', 'agent_prober'], ['prober', 'agent_prober'], ['security', 'agent_prober'], ['privilege escalation', 'agent_prober'], ['privilege', 'agent_prober'], ['red team', 'agent_prober'], ['vulnerabilit', 'agent_prober'],
+
+  ['veritas', 'veritas'], ['verification', 'veritas'], ['truth', 'veritas'], ['faithbench', 'veritas'],
+
+  ['genopt', 'genopt'], ['observability', 'genopt'], ['optimiser', 'genopt'], ['optimizer', 'genopt'], ['cost savings', 'genopt'],
+
+  ['accenture', 'accenture'], ['fde', 'accenture'], ['forward deployed', 'accenture'], ['current job', 'accenture'], ['current role', 'accenture'], ['edinburgh', 'accenture'],
+
+  ['career', 'career'], ['timeline', 'career'], ['history', 'career'], ['previous job', 'career'], ['past job', 'career'], ['work history', 'career'],
+
+  ['publications', 'publications'], ['papers', 'publications'], ['paper', 'publications'], ['research output', 'publications'],
+
+  ['ai safety', 'ai_safety'], ['ai_safety', 'ai_safety'], ['safety', 'ai_safety'], ['alignment', 'ai_safety'],
+
+  ['quiet storm', 'quiet_storm'], ['quiet_storm', 'quiet_storm'], ['personality', 'quiet_storm']
+];
+
+// Heuristic to detect if a query is even about a person at all (vs random chatter)
+// If no Sana-related signal and no matched topic, route to outOfScope.
+var SANA_SIGNALS = [
+  'sana', 'her', 'she', 'she\'s', 'she is', 'shes', 'this person', 'this candidate',
+  'this engineer', 'this developer', 'the person', 'the candidate'
+];
+var SELF_SIGNALS_FIRST_PERSON = ['you', 'your', 'yourself'];
+
+function findResponseKey(text) {
+  var t = text.toLowerCase().trim();
+  if (!t) return null;
+  if (RESPONSES[t]) return t;
+
+  // Check ordered keywords list
+  for (var i = 0; i < KEYWORDS.length; i++) {
+    if (t.indexOf(KEYWORDS[i][0]) !== -1) return KEYWORDS[i][1];
+  }
+
+  // No topic match: decide between unknown (Sana-relevant but not in graph)
+  // and outOfScope (totally unrelated)
+  var hasSanaSignal = false;
+  for (var j = 0; j < SANA_SIGNALS.length; j++) {
+    if (t.indexOf(SANA_SIGNALS[j]) !== -1) { hasSanaSignal = true; break; }
+  }
+  for (var k = 0; !hasSanaSignal && k < SELF_SIGNALS_FIRST_PERSON.length; k++) {
+    var w = SELF_SIGNALS_FIRST_PERSON[k];
+    // word-boundary-ish check
+    if (new RegExp('\\b' + w + '\\b').test(t)) { hasSanaSignal = true; break; }
+  }
+
+  return hasSanaSignal ? 'unknown' : 'outOfScope';
+}
+
+function handleQuery(text) {
+  if (!text.trim()) return;
+  addQuery(text);
+
+  var key = findResponseKey(text) || 'outOfScope';
+  var resp = RESPONSES[key] || RESPONSES.outOfScope;
+
+  setTimeout(function() {
+    var html = '<div class="msg-label"><span class="who">sana.os</span><span class="ts">' + ts() + '</span></div>';
+
+    if (resp.tool) {
+      html += '<div class="tool-card"><div class="head">tool · graph</div><div class="args"><span class="k">' + resp.tool.name + '</span>(' + resp.tool.args + ')</div></div>';
+      if (resp.result) {
+        html += '<div class="tool-result">→ ' + resp.result + '</div>';
+      }
+    }
+
+    html += '<div class="body">' + resp.body(text) + '</div>';
+
+    // Related nodes
+    if (resp.nodes && resp.nodes.length) {
+      html += '<div class="related"><span class="label">related →</span>';
+      resp.nodes.forEach(function(nodeId) {
+        var n = GRAPH.byId[nodeId];
+        if (n) {
+          html += '<span class="chip" data-q="' + n.id + '">' + n.id + '</span>';
+        }
+      });
+      html += '</div>';
+    }
+
+    var msg = msgEl('r', html);
+    addMsg(msg);
+
+    // Wire up related chips
+    msg.querySelectorAll('.chip').forEach(function(c) {
+      c.addEventListener('click', function() {
+        // map node id to a query key if we have one, otherwise just type the id
+        var nodeId = c.dataset.q;
+        var matched = null;
+        for (var qk in RESPONSES) {
+          if (RESPONSES[qk].nodes && RESPONSES[qk].nodes.indexOf(nodeId) !== -1) {
+            matched = qk;
+            break;
+          }
+        }
+        handleQuery(matched || nodeId);
+      });
+    });
+  }, 350 + Math.random() * 250);
+}
+
+// Wire input
+document.getElementById('inputField').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    handleQuery(this.value);
+    this.value = '';
+  }
+});
+document.getElementById('inputSend').addEventListener('click', function() {
+  var f = document.getElementById('inputField');
+  handleQuery(f.value);
+  f.value = '';
+});
+
+// Suggestion chips
+document.querySelectorAll('.sug-chip').forEach(function(chip) {
+  chip.addEventListener('click', function() {
+    handleQuery(chip.dataset.q);
+  });
+});
+
+// Rail items
+document.querySelectorAll('.rail-item[data-q]').forEach(function(item) {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.rail-item').forEach(function(x) { x.classList.remove('active'); });
+    item.classList.add('active');
+    handleQuery(item.dataset.q);
+  });
+});
+
+// =====================================================================
+// LIVE CLOCK & ACTIVITY
+// =====================================================================
+function updateClock() {
+  var now = new Date();
+  var fmtUK = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/London',
+    hour: '2-digit', minute: '2-digit', hour12: false
+  });
+  var time = fmtUK.format(now);
+  var clk = document.getElementById('nowClock');
+  if (clk) clk.textContent = time;
+
+  var hour = parseInt(new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/London', hour: '2-digit', hour12: false
+  }).format(now), 10);
+
+  var act;
+  if (hour < 2) act = "Probably still on the personal laptop. Again.";
+  else if (hour < 7) act = "Sleeping, hopefully.";
+  else if (hour < 9) act = "Morning. Maybe gym. Maybe coffee.";
+  else if (hour < 12) act = "Day job. Real ML work.";
+  else if (hour < 13) act = "Lunch. Probably calling home.";
+  else if (hour < 17) act = "Back at the day job. Head down.";
+  else if (hour < 19) act = "Gym. Then dinner.";
+  else if (hour < 21) act = "Reading. Fiction only.";
+  else if (hour < 23) act = "Second shift starting.";
+  else act = "Deep in something. Shouldn't be up this late.";
+
+  var actEl = document.getElementById('nowAct');
+  if (actEl) actEl.textContent = act;
+
+  var dayName = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'long' }).format(now);
+  var locEl = document.getElementById('nowLoc');
+  if (locEl) locEl.textContent = dayName + ' · Edinburgh · 55.9°N';
+}
+updateClock();
+setInterval(updateClock, 30000);
+</script>
+
+</body>
+</html>
