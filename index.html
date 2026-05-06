@@ -657,7 +657,7 @@ body::after {
 .rail-item.active {
   background: var(--bg-4);
   color: var(--ink);
-  border-left: 2px solid var(--moment);
+  border-left: 2px solid var(--line-strong);
   padding-left: calc(0.75rem - 2px);
 }
 .rail-item .icon {
@@ -800,7 +800,7 @@ body::after {
   display: block;
   font-style: italic;
   padding: 0.7rem 0 0.7rem 1.3rem;
-  border-left: 2px solid var(--moment);
+  border-left: 2px solid var(--line-strong);
   margin: 1.2rem 0;
   font-size: 1.18rem;
   line-height: 1.4;
@@ -1173,8 +1173,7 @@ body::after {
   font-size: 0.9rem;
   color: var(--ink);
   line-height: 1.4;
-  padding-left: 0.7rem;
-  border-left: 2px solid var(--accent);
+  padding-left: 0;
 }
 
 .welcome-tagline {
@@ -1209,20 +1208,37 @@ body::after {
 /* Quiet ghost line on the constellation page itself */
 .constellation-tagline {
   position: fixed;
-  bottom: 0.55rem;
+  bottom: 1.7rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 60;
   font-family: 'Instrument Serif', serif;
   font-style: italic;
-  font-size: 0.78rem;
-  color: var(--ink-faint);
-  letter-spacing: 0.02em;
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+  letter-spacing: 0.01em;
   white-space: nowrap;
   pointer-events: none;
-  opacity: 0.65;
+  opacity: 0.9;
   text-align: center;
+  padding: 0 1.6rem;
+  position: fixed;
 }
+.constellation-tagline::before,
+.constellation-tagline::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  opacity: 0.55;
+}
+.constellation-tagline::before { left: 0; }
+.constellation-tagline::after  { right: 0; }
 @media (max-width: 1100px) {
   .constellation-tagline { display: none; }
 }
@@ -1588,6 +1604,22 @@ var hoveredNode = null;
 var visitedNodes = {};
 var bgStars = [];
 
+// Camera viewing bounds. The graph nodes live within roughly
+// x ∈ [-1500, 1380], y ∈ [-640, 600]. We allow the camera to roam past
+// the graph by ~600px on each side so users can frame freely without
+// flying off into empty space.
+var CAM_BOUNDS = {
+  xMin: -1900, xMax: 1700,
+  yMin: -1100, yMax: 1000,
+};
+
+function clampCam() {
+  if (cam.tx < CAM_BOUNDS.xMin) cam.tx = CAM_BOUNDS.xMin;
+  if (cam.tx > CAM_BOUNDS.xMax) cam.tx = CAM_BOUNDS.xMax;
+  if (cam.ty < CAM_BOUNDS.yMin) cam.ty = CAM_BOUNDS.yMin;
+  if (cam.ty > CAM_BOUNDS.yMax) cam.ty = CAM_BOUNDS.yMax;
+}
+
 var COLORS = {
   moment:    [255, 177, 117],
   project:   [184, 156, 255],
@@ -1610,7 +1642,9 @@ function resize() {
   canvas.style.height = H + 'px';
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  var count = Math.floor((W * H) / 1600); // ~2x denser for galaxy feel
+  // Star count scales with the starfield area (6500 × 5000 world units),
+  // not just the visible viewport, so density stays consistent as the user pans.
+  var count = Math.max(1200, Math.floor((W * H) / 1600));
   bgStars = [];
   // Star color palette — mostly white, some warm, some cool
   var palettes = [
@@ -1631,8 +1665,8 @@ function resize() {
           : size < 0.95 ? Math.random() * 0.9 + 0.5
           : Math.random() * 1.4 + 1.0; // rare bright star
     bgStars.push({
-      x: (Math.random() - 0.5) * 5000,
-      y: (Math.random() - 0.5) * 3500,
+      x: (Math.random() - 0.5) * 6500,
+      y: (Math.random() - 0.5) * 5000,
       r: r,
       a: Math.random() * 0.5 + 0.2,
       twinkle: Math.random() * Math.PI * 2,
@@ -1983,6 +2017,7 @@ window.addEventListener('mousemove', function(e) {
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
     cam.tx = camStart.x - dx / cam.zoom;
     cam.ty = camStart.y - dy / cam.zoom;
+    clampCam();
   }
 
   if (document.getElementById('stage-sky').classList.contains('hidden')) return;
@@ -2050,6 +2085,7 @@ canvas.addEventListener('wheel', function(e) {
   };
   cam.tx += wp.x - afterWp.x;
   cam.ty += wp.y - afterWp.y;
+  clampCam();
 }, { passive: false });
 
 window.addEventListener('keydown', function(e) {
@@ -2081,12 +2117,14 @@ canvas.addEventListener('touchmove', function(e) {
     if (Math.abs(dxRaw) > 4 || Math.abs(dyRaw) > 4) tDragMoved = true;
     cam.tx = tCamStart.x - dxRaw / cam.zoom;
     cam.ty = tCamStart.y - dyRaw / cam.zoom;
+    clampCam();
   } else if (e.touches.length === 2 && tLastDist) {
     var dx = e.touches[0].clientX - e.touches[1].clientX;
     var dy = e.touches[0].clientY - e.touches[1].clientY;
     var dist = Math.sqrt(dx * dx + dy * dy);
     cam.tzoom = Math.max(0.25, Math.min(4, cam.tzoom * (dist / tLastDist)));
     tLastDist = dist;
+    clampCam();
   }
 }, { passive: true });
 canvas.addEventListener('touchend', function(e) {
