@@ -184,9 +184,10 @@ body::after {
 .tb-right a {
   color: inherit;
   text-decoration: none;
+  cursor: pointer;
   transition: color 0.2s;
 }
-.tb-right a:hover { color: var(--moment); }
+.tb-right a:hover { color: var(--moment); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ============ MODE STAGES ============ */
 .stage {
@@ -623,6 +624,8 @@ body::after {
   margin-bottom: 0.15rem;
 }
 .rail-item:hover { background: var(--bg-3); color: var(--ink); }
+.rail-item-link { text-decoration: none; }
+.rail-item-link:hover { text-decoration: none; }
 .rail-item.active {
   background: var(--bg-4);
   color: var(--ink);
@@ -1028,7 +1031,6 @@ body::after {
   /* Welcome dialog */
   .welcome { padding: 1.8rem 1.3rem; max-width: calc(100vw - 1.5rem); }
   .welcome h2 { font-size: 1.6rem; }
-  .welcome-tagline { font-size: 0.95rem; padding: 0.6rem 0.8rem; }
   .welcome p { font-size: 0.92rem; }
   .welcome-actions { flex-direction: column; gap: 0.5rem; align-items: stretch; }
   .welcome .btn { width: 100%; padding: 0.85rem 1rem; font-size: 0.55rem; }
@@ -1131,36 +1133,7 @@ body::after {
   padding-left: 0;
 }
 
-.welcome-tagline {
-  font-family: 'Instrument Serif', serif;
-  font-style: italic;
-  font-size: 1.15rem;
-  color: var(--ink);
-  line-height: 1.4;
-  margin: 0.5rem auto 1.4rem;
-  padding: 0.7rem 1.2rem;
-  letter-spacing: 0.005em;
-  max-width: 90%;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  position: relative;
-}
-.welcome-tagline::before,
-.welcome-tagline::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-}
-.welcome-tagline::before { top: -2.5px; }
-.welcome-tagline::after { bottom: -2.5px; }
-
-/* Quiet ghost line on the constellation page itself */
+/* Quiet tagline visible on the constellation page */
 .constellation-tagline {
   position: fixed;
   bottom: 1.7rem;
@@ -1213,7 +1186,7 @@ body::after {
   </div>
   <div class="tb-right">
     <span>v0.1 · 2026</span>
-    <a href="https://www.linkedin.com/in/sana-riaz-074895137/" target="_blank">LinkedIn ↗</a>
+    <a href="https://www.linkedin.com/in/sana-riaz-074895137/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
   </div>
 </div>
 
@@ -1259,7 +1232,6 @@ body::after {
   <div class="welcome" id="welcome">
     <div class="pre">A Knowledge Graph of a Life</div>
     <h2>Meet Sana through the <em>constellation</em>.</h2>
-    <div class="welcome-tagline">Both the map and the maker are still in motion.</div>
     <p>
       Each star is a piece of who she is. Drag the sky. Hover a star to read it. <em>Click to pin it open</em> when you want to explore. Or skip the visuals and <em>talk to her</em> directly through the console.
     </p>
@@ -1318,7 +1290,7 @@ body::after {
 
       <div class="rail-section">
         <div class="rail-head">External</div>
-        <div class="rail-item" onclick="window.open('https://www.linkedin.com/in/sana-riaz-074895137/','_blank')"><span class="icon">↗</span> linkedin</div>
+        <a class="rail-item rail-item-link" href="https://www.linkedin.com/in/sana-riaz-074895137/" target="_blank" rel="noopener noreferrer"><span class="icon">↗</span> linkedin</a>
       </div>
     </aside>
 
@@ -1516,7 +1488,7 @@ function applyMeta() {
 
   // Tagline — update in both welcome dialog and the ambient ghost line
   if (meta.tagline) {
-    document.querySelectorAll('.welcome-tagline, .constellation-tagline').forEach(function(el) {
+    document.querySelectorAll('.constellation-tagline').forEach(function(el) {
       el.textContent = meta.tagline;
     });
   }
