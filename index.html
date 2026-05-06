@@ -4,6 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sana — A Knowledge Graph of a Life</title>
+
+<!-- SEO -->
+<meta name="description" content="A knowledge graph of a life. Sana Riaz: ML engineer in Edinburgh, building production LLM systems by day and AI safety research by night.">
+<meta name="author" content="Sana Riaz">
+<link rel="canonical" href="https://riaz-sana.github.io/">
+
+<!-- Open Graph (LinkedIn, Slack, Discord, Facebook) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://riaz-sana.github.io/">
+<meta property="og:title" content="Sana — A Knowledge Graph of a Life">
+<meta property="og:description" content="Both the map and the maker are still in motion. A constellation of projects, work, and what drives her.">
+<meta property="og:image" content="https://riaz-sana.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Constellation visualisation with the title 'Meet Sana through the constellation'">
+<meta property="og:site_name" content="riaz-sana.github.io">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://riaz-sana.github.io/">
+<meta name="twitter:title" content="Sana — A Knowledge Graph of a Life">
+<meta name="twitter:description" content="Both the map and the maker are still in motion.">
+<meta name="twitter:image" content="https://riaz-sana.github.io/og-image.png">
+
+<!-- Theme color for mobile browser chrome -->
+<meta name="theme-color" content="#07091c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1017,6 +1043,92 @@ body::after {
   .tb-right span:first-child { display: none; }
 }
 
+/* Phone-specific tightening */
+@media (max-width: 600px) {
+  /* Topbar: tighten the mode toggle */
+  .mode-btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.55rem;
+    letter-spacing: 0.12em;
+  }
+  .tb-brand {
+    font-size: 1rem;
+  }
+  .tb-right { gap: 0.5rem; font-size: 0.55rem; }
+  .tb-right a { font-size: 0.55rem; }
+
+  /* Legend: hide a few of the less-used categories and tighten further */
+  .legend {
+    bottom: 0.6rem;
+    left: 0.6rem;
+    right: 0.6rem;
+    padding: 0.4rem 0.7rem;
+    gap: 0.5rem;
+    font-size: 0.45rem;
+    justify-content: center;
+  }
+  .legend .item:nth-child(n+5) { display: none; }
+
+  /* Welcome dialog */
+  .welcome { padding: 1.8rem 1.3rem; max-width: calc(100vw - 1.5rem); }
+  .welcome h2 { font-size: 1.6rem; }
+  .welcome-tagline { font-size: 0.95rem; padding: 0.6rem 0.8rem; }
+  .welcome p { font-size: 0.92rem; }
+  .welcome-actions { flex-direction: column; gap: 0.5rem; align-items: stretch; }
+  .welcome .btn { width: 100%; padding: 0.85rem 1rem; font-size: 0.55rem; }
+  .welcome .keys { font-size: 0.5rem; letter-spacing: 0.18em; }
+  .welcome .keys kbd { font-size: 0.5rem; padding: 0.1rem 0.3rem; }
+
+  /* Detail panel: full-width minus margin, anchored bottom */
+  .detail {
+    width: calc(100vw - 1.2rem);
+    max-width: calc(100vw - 1.2rem);
+    max-height: 60vh;
+    padding: 1.1rem 1.2rem;
+    left: 0.6rem !important;
+    right: 0.6rem !important;
+  }
+  .detail h3 { font-size: 1.15rem; }
+  .detail .body { font-size: 0.88rem; }
+  .detail .stats { grid-template-columns: 1fr; }
+
+  /* Console */
+  .cm-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .cm-meta { text-align: left; }
+  .cm-title { font-size: 1.3rem; }
+  .console-inner { padding: 1rem 0.9rem 7rem; }
+  .msg.r .body { font-size: 0.95rem; }
+  .input-box { padding: 0.6rem 0.9rem; }
+  .input-field { font-size: 0.8rem; }
+  .input-send {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+  }
+  .suggestions {
+    /* On phone show a horizontal scroll of suggestions instead of wrapping */
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.4rem;
+  }
+  .suggestions::-webkit-scrollbar { height: 3px; }
+  .suggestions::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 2px; }
+  .sug-chip { white-space: nowrap; flex-shrink: 0; font-size: 0.6rem; }
+
+  /* Constellation tagline ghost line — already hidden at 1100px */
+  .constellation-tagline { display: none; }
+}
+
+/* Very small phones (iPhone SE etc.) */
+@media (max-width: 380px) {
+  .tb-brand { font-size: 0.9rem; }
+  .mode-btn { padding: 0.3rem 0.55rem; font-size: 0.5rem; letter-spacing: 0.1em; }
+  .tb-right a { font-size: 0.5rem; }
+  .welcome h2 { font-size: 1.4rem; }
+  .legend .item:nth-child(n+4) { display: none; }
+}
+
 .graph-loader {
   position: fixed;
   inset: 48px 0 0 0;
@@ -1065,14 +1177,54 @@ body::after {
   border-left: 2px solid var(--accent);
 }
 
-.welcome-closing {
+.welcome-tagline {
   font-family: 'Instrument Serif', serif;
   font-style: italic;
-  font-size: 0.9rem;
-  color: var(--ink-dim);
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  letter-spacing: 0.01em;
+  font-size: 1.15rem;
+  color: var(--ink);
+  line-height: 1.4;
+  margin: 0.5rem auto 1.4rem;
+  padding: 0.7rem 1.2rem;
+  letter-spacing: 0.005em;
+  max-width: 90%;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.welcome-tagline::before,
+.welcome-tagline::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.welcome-tagline::before { top: -2.5px; }
+.welcome-tagline::after { bottom: -2.5px; }
+
+/* Quiet ghost line on the constellation page itself */
+.constellation-tagline {
+  position: fixed;
+  bottom: 0.55rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0.65;
+  text-align: center;
+}
+@media (max-width: 1100px) {
+  .constellation-tagline { display: none; }
 }
 </style>
 </head>
@@ -1124,6 +1276,8 @@ body::after {
     <span class="zoom-val" id="zoomVal">1.0×</span>
   </div>
 
+  <div class="constellation-tagline">Both the map and the maker are still in motion.</div>
+
   <div class="detail" id="detail">
     <button class="close-btn" id="closeBtn">×</button>
     <div class="meta-row">
@@ -1144,6 +1298,7 @@ body::after {
   <div class="welcome" id="welcome">
     <div class="pre">A Knowledge Graph of a Life</div>
     <h2>Meet Sana through the <em>constellation</em>.</h2>
+    <div class="welcome-tagline">Both the map and the maker are still in motion.</div>
     <p>
       Each star is a piece of who she is. Drag the sky. Hover a star to read it. <em>Click to pin it open</em> when you want to explore. Or skip the visuals and <em>talk to her</em> directly through the console.
     </p>
@@ -1151,7 +1306,6 @@ body::after {
       <button class="btn" id="welcomeBtn">⊙ &nbsp;Enter the sky →</button>
       <button class="btn btn-ghost" id="welcomeConsoleBtn">▸ &nbsp;Talk to sana.os →</button>
     </div>
-    <div class="welcome-closing">Both the map and the maker are still in motion.</div>
     <div class="keys">
       <kbd>drag</kbd> pan · <kbd>click</kbd> pin · <kbd>scroll</kbd> zoom · <kbd>r</kbd> reset
     </div>
@@ -1255,7 +1409,7 @@ body::after {
     <aside class="context-panel">
 
       <div class="cp-section">
-        <div class="cp-head"><span>Now · Live</span></div>
+        <div class="cp-head"><span>Now · An informed guess</span></div>
         <div class="now-card">
           <div class="now-time" id="nowClock">--:--</div>
           <div class="now-loc" id="nowLoc">Edinburgh · 55.9°N</div>
@@ -1302,6 +1456,7 @@ var API_BASE = "https://sana-graph-api.sanariaz154.workers.dev";
 var GRAPH = {
   nodes: [],
   byId: {},
+  meta: {},
   loaded: false,
 };
 var CONNECTIONS = [];
@@ -1315,6 +1470,7 @@ async function loadGraph() {
       throw new Error("graph response missing nodes");
     }
     GRAPH.nodes = data.nodes;
+    GRAPH.meta = data.meta || {};
     GRAPH.byId = {};
     GRAPH.nodes.forEach(function(n) { GRAPH.byId[n.id] = n; });
 
@@ -1332,6 +1488,7 @@ async function loadGraph() {
 
     GRAPH.loaded = true;
     onGraphLoaded();
+    applyMeta();
   } catch (err) {
     console.error("Graph load failed:", err);
     onGraphLoadError(err);
@@ -1341,7 +1498,45 @@ async function loadGraph() {
 function onGraphLoaded() {
   var loader = document.getElementById('graphLoader');
   if (loader) loader.classList.add('hidden');
+
+  // Deep-link: if URL has #star=ID, pin that star and pan to it
+  handleDeepLink();
 }
+
+function handleDeepLink() {
+  try {
+    var hash = window.location.hash || '';
+    var match = hash.match(/^#star=([a-z0-9_]+)$/i);
+    if (!match) return;
+    var nodeId = match[1];
+    var node = GRAPH.byId[nodeId];
+    if (!node) return;
+    // Make sure we're on the constellation, not the console
+    var skyBtn = document.getElementById('mb-sky');
+    if (skyBtn) skyBtn.click();
+    // Dismiss welcome if it's still up
+    var welcome = document.getElementById('welcome');
+    if (welcome) welcome.classList.add('dismissed');
+    // Pin and pan
+    setTimeout(function() {
+      if (typeof pinNode === 'function') {
+        pinNode(node);
+      }
+      if (typeof cam !== 'undefined') {
+        cam.tx = node.x;
+        cam.ty = node.y;
+        cam.tzoom = 1.2;
+      }
+    }, 300);
+  } catch (e) {
+    console.warn('deep link handler failed:', e.message);
+  }
+}
+
+// Re-handle if hash changes (browser back/forward, or another tap)
+window.addEventListener('hashchange', function() {
+  if (GRAPH.loaded) handleDeepLink();
+});
 
 function onGraphLoadError(err) {
   var loader = document.getElementById('graphLoader');
@@ -1350,6 +1545,31 @@ function onGraphLoadError(err) {
       '<p>Couldn\'t load the constellation right now.</p>' +
       '<p style="font-family: \'JetBrains Mono\', monospace; font-size: 0.65rem; opacity: 0.5; margin-top: 0.5rem;">try refreshing in a moment</p>' +
       '</div>';
+  }
+}
+
+// Apply meta config (tagline, currently_exploring) from the API into the DOM.
+// Activities are read on each clock tick separately so they're picked up live.
+function applyMeta() {
+  var meta = GRAPH.meta || {};
+
+  // Tagline — update in both welcome dialog and the ambient ghost line
+  if (meta.tagline) {
+    document.querySelectorAll('.welcome-tagline, .constellation-tagline').forEach(function(el) {
+      el.textContent = meta.tagline;
+    });
+  }
+
+  // Currently exploring — replace the static list
+  if (Array.isArray(meta.currently_exploring) && meta.currently_exploring.length > 0) {
+    var card = document.querySelector('.exploring-card');
+    if (card) {
+      card.innerHTML = meta.currently_exploring.map(function(text) {
+        // Re-use existing escape helper if defined
+        var safe = (typeof escapeHtml === 'function') ? escapeHtml(text) : text;
+        return '<div class="exploring-item">' + safe + '</div>';
+      }).join('');
+    }
   }
 }
 
@@ -1697,12 +1917,25 @@ function pinNode(node) {
   hoveredNode = null;
   detail.classList.add('pinned');
   showNode(node);
+  // Update URL hash so user can copy the link as a deep-link to this star
+  try {
+    var newHash = '#star=' + node.id;
+    if (window.location.hash !== newHash) {
+      history.replaceState(null, '', newHash);
+    }
+  } catch (e) { /* ignore */ }
 }
 
 function unpinDetail() {
   pinnedNode = null;
   detail.classList.remove('pinned');
   detail.classList.remove('on');
+  // Clear URL hash when nothing is pinned
+  try {
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  } catch (e) { /* ignore */ }
 }
 
 document.getElementById('closeBtn').addEventListener('click', function(e) {
@@ -1987,13 +2220,36 @@ function escapeHtml(s) {
   });
 }
 
-async function handleQuery(text) {
+async function handleQuery(text, displayText) {
   if (!text || !text.trim()) return;
   text = text.trim();
 
-  // Show user message
+  // Translate short rail/chip keywords into real questions for the LLM
+  var KEYWORD_TO_QUESTION = {
+    whoami: "Give me a quick orientation: who is Sana?",
+    origin: "Tell me her origin story — where she's from and how she got into this work.",
+    why: "What drives her? What is she actually trying to build, and why?",
+    loop: "What's a typical night like for her — how does she actually work?",
+    hire: "What kind of work is she at her best in? Where does she shine?",
+    weakness: "What are her real tradeoffs and weaknesses? Where does she struggle?",
+    good: "What's unusual about her — the things that genuinely set her apart?",
+    bad: "What are some recognisably human shortcomings she has?",
+    hive: "Tell me about Hive, her multi-agent coalitions project.",
+    agent_prober: "Tell me about Agent Prober, her semantic privilege escalation work.",
+    veritas: "Tell me about Veritas, her multi-agent verification project.",
+    genopt: "Tell me about GenOpt, her LLM workflow optimiser.",
+    accenture: "What does she do at Accenture? What's her actual role and work there?",
+    career: "Walk me through her full career timeline.",
+    publications: "What has she published? Tell me about her research papers.",
+    ai_safety: "What's her position on AI safety? Why does she care about it?",
+  };
+
+  var questionToSend = KEYWORD_TO_QUESTION[text] || text;
+  var visibleText = displayText || text;
+
+  // Show user message (visible text — what they clicked / typed)
   var qHtml = '<div class="msg-label"><span class="who">you</span><span class="ts">' + ts() + '</span></div>' +
-              '<div class="body">' + escapeHtml(text) + '</div>';
+              '<div class="body">' + escapeHtml(visibleText) + '</div>';
   addMsg(msgEl('q', qHtml));
 
   // Show typing indicator
@@ -2007,7 +2263,7 @@ async function handleQuery(text) {
     var res = await fetch(API_BASE + '/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: text })
+      body: JSON.stringify({ question: questionToSend })
     });
 
     if (!res.ok) {
@@ -2058,7 +2314,9 @@ document.getElementById('inputSend').addEventListener('click', function() {
 // Suggestion chips
 document.querySelectorAll('.sug-chip').forEach(function(chip) {
   chip.addEventListener('click', function() {
-    handleQuery(chip.dataset.q);
+    // Use the chip's visible label (minus the ★/§/$ tag) as the display text
+    var label = chip.textContent.replace(/^[★§$⌘▸]\s*/, '').trim();
+    handleQuery(chip.dataset.q, label);
   });
 });
 
@@ -2067,7 +2325,9 @@ document.querySelectorAll('.rail-item[data-q]').forEach(function(item) {
   item.addEventListener('click', function() {
     document.querySelectorAll('.rail-item').forEach(function(x) { x.classList.remove('active'); });
     item.classList.add('active');
-    handleQuery(item.dataset.q);
+    // Use the rail item's visible label (minus the icon) as the display text
+    var label = item.textContent.replace(/^[★§$⌘▸]\s*/, '').trim();
+    handleQuery(item.dataset.q, label);
   });
 });
 
@@ -2088,30 +2348,51 @@ function updateClock() {
     timeZone: 'Europe/London', hour: '2-digit', hour12: false
   }).format(now), 10);
 
-  var ACTIVITIES = {
-    late_night:    ["second shift in motion", "still building, it's a thing she does", "deep in something that probably won't work the first time", "running an experiment past midnight"],
-    early_morning: ["asleep, ideally", "the laptop is off, briefly", "off the grid for a few hours", "recharging"],
-    morning:       ["first coffee, second meeting", "reviewing PRs and design docs", "easing into the day job", "calibrating for the day"],
-    midday:        ["deep in client work", "in a working session with the team", "heads-down on a deliverable", "writing eval criteria, probably"],
-    lunch:         ["lunch and a call home to Karachi", "stepping away from the screen", "reading something that isn't code", "thinking about what to ship next"],
-    afternoon:     ["back at the day job, head down", "client review, post-it notes everywhere", "shipping a thing she said she'd ship", "design review in progress"],
-    transition:    ["between the day job and the next thing", "unwinding before the second shift", "gym, then coffee, then code", "decompressing"],
-    evening:       ["on the personal laptop, building", "running an experiment that probably won't work", "reading a paper that just dropped", "writing the version of this she actually likes"],
-    night:         ["second shift starting", "the personal projects pile is calling", "fixing something she meant to fix last week", "iterating quietly"],
+  // Activities + bucket boundaries come from GRAPH.meta (loaded from API).
+  // Fallback defaults are kept inline so the clock still shows something reasonable
+  // if the API hasn't loaded yet on first paint.
+  var FALLBACK_ACTIVITIES = {
+    late_night:    ["probably on the personal laptop"],
+    early_morning: ["asleep, ideally"],
+    morning:       ["easing into the day, probably"],
+    midday:        ["likely deep in client work"],
+    lunch:         ["stepping away from the screen, hopefully"],
+    afternoon:     ["back at the day job, probably"],
+    transition:    ["between the day job and the next thing, probably"],
+    evening:       ["probably on the personal laptop"],
+    night:         ["second shift, most likely"],
   };
-  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-  var bucket;
-  if (hour < 2) bucket = 'late_night';
-  else if (hour < 7) bucket = 'early_morning';
-  else if (hour < 9) bucket = 'morning';
-  else if (hour < 12) bucket = 'midday';
-  else if (hour < 13) bucket = 'lunch';
-  else if (hour < 17) bucket = 'afternoon';
-  else if (hour < 19) bucket = 'transition';
-  else if (hour < 21) bucket = 'evening';
-  else if (hour < 23) bucket = 'night';
-  else bucket = 'late_night';
-  var act = pick(ACTIVITIES[bucket]);
+  var FALLBACK_BUCKETS = [
+    { until: 2,  bucket: 'late_night' },
+    { until: 7,  bucket: 'early_morning' },
+    { until: 9,  bucket: 'morning' },
+    { until: 12, bucket: 'midday' },
+    { until: 13, bucket: 'lunch' },
+    { until: 17, bucket: 'afternoon' },
+    { until: 19, bucket: 'transition' },
+    { until: 21, bucket: 'evening' },
+    { until: 23, bucket: 'night' },
+    { until: 24, bucket: 'late_night' },
+  ];
+
+  var meta = (GRAPH && GRAPH.meta) || {};
+  var activities = (meta.activities && Object.keys(meta.activities).length) ? meta.activities : FALLBACK_ACTIVITIES;
+  var buckets = (Array.isArray(meta.activity_buckets) && meta.activity_buckets.length) ? meta.activity_buckets : FALLBACK_BUCKETS;
+
+  function pick(arr) {
+    if (!Array.isArray(arr) || arr.length === 0) return '';
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  // Pick the first bucket whose `until` is greater than the current hour.
+  var bucketName = 'late_night';
+  for (var bi = 0; bi < buckets.length; bi++) {
+    if (hour < buckets[bi].until) {
+      bucketName = buckets[bi].bucket;
+      break;
+    }
+  }
+  var act = pick(activities[bucketName]) || pick(FALLBACK_ACTIVITIES[bucketName]) || '...';
 
   var actEl = document.getElementById('nowAct');
   if (actEl) actEl.textContent = act;
