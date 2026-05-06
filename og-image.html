@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OG Image · Sana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* This file renders the social-share preview card at 1200×630.
+     To produce og-image.png:
+       1. Open this file in Chrome
+       2. Open DevTools → device toolbar (Cmd-Shift-M)
+       3. Set viewport to 1200×630 exactly
+       4. DevTools menu (⋮) → Capture full size screenshot
+       5. Save as og-image.png next to your index.html
+  */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #050717; }
+  body { display: flex; align-items: flex-start; justify-content: flex-start; min-height: 100vh; }
+
+  .card {
+    width: 1200px;
+    height: 630px;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 60% 40% at 12% 18%, rgba(200, 165, 255, 0.18) 0%, transparent 55%),
+      radial-gradient(ellipse 55% 60% at 90% 78%, rgba(255, 184, 163, 0.14) 0%, transparent 50%),
+      radial-gradient(ellipse 45% 35% at 50% 50%, rgba(143, 223, 212, 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 45% at 75% 12%, rgba(168, 237, 221, 0.08) 0%, transparent 55%),
+      linear-gradient(180deg, #07091c 0%, #0a0d28 50%, #050717 100%);
+    color: #ece9f5;
+  }
+
+  /* The full SVG layer (background stars + constellation) */
+  .svg-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* Text overlay — left half */
+  .content {
+    position: absolute;
+    left: 60px;
+    top: 56px;
+    width: 480px;
+    height: calc(100% - 112px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 2;
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pulse {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ffb8a3;
+    box-shadow: 0 0 12px #ffb8a3;
+  }
+  .brand {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 24px;
+    color: #ece9f5;
+    letter-spacing: -0.01em;
+  }
+  .brand em { color: #ffb8a3; font-style: normal; }
+
+  .middle { padding-top: 8px; }
+
+  .pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    color: #ffb8a3;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .name {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: #ece9f5;
+    margin-bottom: 14px;
+  }
+
+  .role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(236, 233, 245, 0.55);
+    margin-bottom: 28px;
+  }
+
+  .tagline {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: rgba(236, 233, 245, 0.78);
+    line-height: 1.4;
+    padding: 14px 0;
+    max-width: 460px;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .pseudo-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .pseudo-btn.primary {
+    background: #ffb8a3;
+    color: #07091c;
+  }
+  .pseudo-btn.ghost {
+    background: transparent;
+    border: 1px solid rgba(236, 233, 245, 0.25);
+    color: #ece9f5;
+  }
+
+  .url-mark {
+    position: absolute;
+    top: 56px;
+    right: 60px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: rgba(236, 233, 245, 0.5);
+    text-transform: lowercase;
+    text-align: right;
+    z-index: 2;
+  }
+  .url-mark .at { color: rgba(236, 233, 245, 0.3); margin-right: 6px; letter-spacing: 0.3em; }
+
+  .system-mark {
+    position: absolute;
+    bottom: 56px;
+    right: 60px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: rgba(236, 233, 245, 0.4);
+    text-transform: lowercase;
+    text-align: right;
+    line-height: 1.6;
+    z-index: 2;
+  }
+  .system-mark .acc { color: #ffb8a3; }
+  .system-mark .v { color: rgba(236, 233, 245, 0.55); margin-left: 4px; }
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <svg class="svg-layer" viewBox="0 0 1200 630" preserveAspectRatio="none">
+    <circle cx="1132.5" cy="315.3" r="0.39" fill="rgba(220,230,255,0.55)"/><circle cx="316.8" cy="617.1" r="0.42" fill="rgba(255,230,220,0.40)"/><circle cx="956.4" cy="87.2" r="0.51" fill="rgba(236,233,245,0.46)"/><circle cx="57.8" cy="83.9" r="0.52" fill="rgba(236,233,245,0.57)"/><circle cx="1151.2" cy="314.2" r="1.44" fill="rgba(220,255,245,0.67)"/><circle cx="380.5" cy="493.5" r="0.31" fill="rgba(255,220,235,0.30)"/><circle cx="512.7" cy="162.5" r="0.69" fill="rgba(236,233,245,0.62)"/><circle cx="401.3" cy="355.7" r="0.52" fill="rgba(236,233,245,0.44)"/><circle cx="136.7" cy="486.3" r="0.66" fill="rgba(255,220,235,0.56)"/><circle cx="741.2" cy="462.5" r="0.63" fill="rgba(236,233,245,0.25)"/><circle cx="517.2" cy="536.4" r="0.66" fill="rgba(255,220,235,0.38)"/><circle cx="980.0" cy="382.4" r="0.71" fill="rgba(255,220,235,0.55)"/><circle cx="105.3" cy="619.8" r="0.44" fill="rgba(236,233,245,0.28)"/><circle cx="871.4" cy="134.6" r="0.68" fill="rgba(255,230,220,0.74)"/><circle cx="967.7" cy="599.8" r="0.50" fill="rgba(220,230,255,0.42)"/><circle cx="286.4" cy="596.9" r="0.94" fill="rgba(236,233,245,0.43)"/><circle cx="443.0" cy="557.6" r="1.27" fill="rgba(236,233,245,0.56)"/><circle cx="137.0" cy="220.6" r="0.54" fill="rgba(255,220,235,0.70)"/><circle cx="589.2" cy="137.6" r="0.29" fill="rgba(236,233,245,0.50)"/><circle cx="248.7" cy="117.2" r="0.55" fill="rgba(220,255,245,0.36)"/><circle cx="960.9" cy="544.7" r="0.53" fill="rgba(236,233,245,0.41)"/><circle cx="386.2" cy="244.2" r="0.61" fill="rgba(220,255,245,0.44)"/><circle cx="302.9" cy="112.9" r="0.69" fill="rgba(255,230,220,0.68)"/><circle cx="1086.9" cy="413.9" r="0.55" fill="rgba(255,220,235,0.41)"/><circle cx="231.1" cy="308.3" r="0.65" fill="rgba(236,233,245,0.42)"/><circle cx="618.7" cy="549.0" r="0.57" fill="rgba(220,230,255,0.54)"/><circle cx="1044.1" cy="503.6" r="0.51" fill="rgba(236,233,245,0.59)"/><circle cx="1117.9" cy="307.0" r="0.57" fill="rgba(236,233,245,0.34)"/><circle cx="618.7" cy="367.7" r="1.46" fill="rgba(236,233,245,0.68)"/><circle cx="784.8" cy="550.5" r="0.20" fill="rgba(220,255,245,0.28)"/><circle cx="564.3" cy="502.8" r="0.28" fill="rgba(255,230,220,0.36)"/><circle cx="1197.2" cy="407.2" r="0.49" fill="rgba(220,255,245,0.37)"/><circle cx="624.1" cy="321.4" r="0.61" fill="rgba(255,220,235,0.32)"/><circle cx="232.5" cy="216.6" r="0.28" fill="rgba(236,233,245,0.60)"/><circle cx="442.7" cy="27.4" r="0.26" fill="rgba(220,255,245,0.63)"/><circle cx="1005.5" cy="378.2" r="0.55" fill="rgba(236,233,245,0.43)"/><circle cx="343.8" cy="391.8" r="0.21" fill="rgba(255,220,235,0.34)"/><circle cx="454.5" cy="324.6" r="0.33" fill="rgba(236,233,245,0.59)"/><circle cx="210.6" cy="241.5" r="0.52" fill="rgba(236,233,245,0.60)"/><circle cx="245.2" cy="32.8" r="0.35" fill="rgba(220,255,245,0.45)"/><circle cx="606.3" cy="376.0" r="1.14" fill="rgba(236,233,245,0.26)"/><circle cx="819.7" cy="273.5" r="0.61" fill="rgba(236,233,245,0.56)"/><circle cx="871.8" cy="197.4" r="0.38" fill="rgba(236,233,245,0.71)"/><circle cx="657.3" cy="383.3" r="0.44" fill="rgba(220,255,245,0.39)"/><circle cx="185.7" cy="233.0" r="1.05" fill="rgba(220,255,245,0.29)"/><circle cx="481.1" cy="464.6" r="0.59" fill="rgba(220,255,245,0.35)"/><circle cx="315.5" cy="2.6" r="0.45" fill="rgba(236,233,245,0.47)"/><circle cx="644.3" cy="553.4" r="0.69" fill="rgba(255,230,220,0.32)"/><circle cx="40.3" cy="559.9" r="0.41" fill="rgba(236,233,245,0.44)"/><circle cx="489.1" cy="509.3" r="0.62" fill="rgba(236,233,245,0.57)"/><circle cx="855.4" cy="230.0" r="0.25" fill="rgba(255,230,220,0.50)"/><circle cx="974.6" cy="621.0" r="0.59" fill="rgba(220,230,255,0.42)"/><circle cx="208.3" cy="300.4" r="0.21" fill="rgba(236,233,245,0.70)"/><circle cx="276.9" cy="458.7" r="0.68" fill="rgba(255,220,235,0.34)"/><circle cx="935.8" cy="89.3" r="0.35" fill="rgba(255,230,220,0.33)"/><circle cx="601.5" cy="59.2" r="1.17" fill="rgba(236,233,245,0.57)"/><circle cx="981.3" cy="477.8" r="0.92" fill="rgba(255,220,235,0.39)"/><circle cx="349.8" cy="537.8" r="0.34" fill="rgba(220,255,245,0.30)"/><circle cx="489.7" cy="123.8" r="0.24" fill="rgba(236,233,245,0.57)"/><circle cx="206.5" cy="96.9" r="0.20" fill="rgba(236,233,245,0.41)"/><circle cx="515.0" cy="353.1" r="0.61" fill="rgba(220,255,245,0.54)"/><circle cx="115.7" cy="363.2" r="0.53" fill="rgba(236,233,245,0.46)"/><circle cx="718.1" cy="118.4" r="0.23" fill="rgba(236,233,245,0.74)"/><circle cx="368.2" cy="5.6" r="0.24" fill="rgba(236,233,245,0.26)"/><circle cx="1098.8" cy="447.5" r="0.66" fill="rgba(220,255,245,0.60)"/><circle cx="536.8" cy="555.5" r="0.70" fill="rgba(236,233,245,0.29)"/><circle cx="381.2" cy="592.1" r="0.52" fill="rgba(236,233,245,0.59)"/><circle cx="527.6" cy="282.7" r="0.23" fill="rgba(236,233,245,0.31)"/><circle cx="14.8" cy="262.2" r="0.24" fill="rgba(236,233,245,0.30)"/><circle cx="1148.2" cy="20.4" r="0.27" fill="rgba(236,233,245,0.51)"/><circle cx="213.3" cy="475.6" r="0.39" fill="rgba(236,233,245,0.52)"/><circle cx="1053.3" cy="579.1" r="0.50" fill="rgba(255,220,235,0.51)"/><circle cx="444.6" cy="63.3" r="0.43" fill="rgba(255,220,235,0.28)"/><circle cx="1000.7" cy="103.8" r="1.32" fill="rgba(255,230,220,0.61)"/><circle cx="863.6" cy="250.7" r="0.60" fill="rgba(236,233,245,0.66)"/><circle cx="896.9" cy="383.5" r="0.34" fill="rgba(236,233,245,0.35)"/><circle cx="431.5" cy="278.0" r="1.24" fill="rgba(255,220,235,0.31)"/><circle cx="321.4" cy="383.7" r="0.46" fill="rgba(236,233,245,0.67)"/><circle cx="685.9" cy="354.0" r="0.22" fill="rgba(255,220,235,0.40)"/><circle cx="432.2" cy="317.0" r="1.51" fill="rgba(236,233,245,0.36)"/><circle cx="1057.0" cy="279.0" r="0.25" fill="rgba(255,220,235,0.52)"/><circle cx="1106.6" cy="506.9" r="0.38" fill="rgba(255,220,235,0.50)"/><circle cx="190.4" cy="602.7" r="0.23" fill="rgba(220,255,245,0.74)"/><circle cx="241.0" cy="380.3" r="0.46" fill="rgba(220,230,255,0.30)"/><circle cx="1032.3" cy="443.9" r="0.49" fill="rgba(255,230,220,0.61)"/><circle cx="793.2" cy="411.5" r="0.45" fill="rgba(236,233,245,0.63)"/><circle cx="620.3" cy="252.3" r="0.68" fill="rgba(236,233,245,0.42)"/><circle cx="1040.8" cy="472.1" r="0.39" fill="rgba(220,230,255,0.30)"/><circle cx="241.4" cy="181.3" r="0.33" fill="rgba(236,233,245,0.64)"/><circle cx="902.2" cy="60.8" r="0.64" fill="rgba(220,255,245,0.47)"/><circle cx="434.6" cy="330.0" r="0.41" fill="rgba(255,230,220,0.52)"/><circle cx="929.7" cy="261.9" r="0.45" fill="rgba(236,233,245,0.32)"/><circle cx="251.0" cy="68.8" r="0.67" fill="rgba(236,233,245,0.34)"/><circle cx="930.2" cy="120.1" r="1.56" fill="rgba(236,233,245,0.70)"/><circle cx="670.0" cy="591.1" r="0.58" fill="rgba(255,230,220,0.49)"/><circle cx="461.5" cy="315.2" r="0.51" fill="rgba(236,233,245,0.72)"/><circle cx="762.9" cy="250.7" r="0.22" fill="rgba(255,230,220,0.43)"/><circle cx="74.1" cy="137.9" r="0.47" fill="rgba(255,230,220,0.69)"/><circle cx="124.8" cy="546.8" r="0.44" fill="rgba(255,230,220,0.74)"/><circle cx="140.6" cy="317.0" r="0.34" fill="rgba(255,220,235,0.39)"/><circle cx="779.0" cy="461.7" r="1.23" fill="rgba(255,230,220,0.72)"/><circle cx="752.4" cy="506.7" r="0.58" fill="rgba(255,220,235,0.65)"/><circle cx="1194.0" cy="403.8" r="0.56" fill="rgba(236,233,245,0.73)"/><circle cx="868.4" cy="627.2" r="0.26" fill="rgba(236,233,245,0.72)"/><circle cx="1104.4" cy="536.6" r="0.69" fill="rgba(220,230,255,0.58)"/><circle cx="837.6" cy="355.5" r="0.65" fill="rgba(255,230,220,0.50)"/><circle cx="953.6" cy="327.9" r="0.22" fill="rgba(220,230,255,0.64)"/><circle cx="632.1" cy="422.9" r="1.16" fill="rgba(220,255,245,0.43)"/><circle cx="1099.8" cy="13.6" r="0.54" fill="rgba(255,230,220,0.56)"/><circle cx="148.9" cy="330.7" r="0.55" fill="rgba(220,230,255,0.74)"/><circle cx="484.2" cy="579.3" r="0.49" fill="rgba(255,230,220,0.48)"/><circle cx="952.9" cy="239.8" r="0.42" fill="rgba(220,255,245,0.36)"/><circle cx="451.9" cy="264.2" r="0.63" fill="rgba(236,233,245,0.25)"/><circle cx="78.5" cy="576.3" r="0.40" fill="rgba(220,255,245,0.50)"/><circle cx="347.0" cy="619.9" r="0.58" fill="rgba(255,220,235,0.47)"/><circle cx="779.4" cy="212.9" r="0.62" fill="rgba(236,233,245,0.62)"/><circle cx="106.3" cy="246.8" r="0.45" fill="rgba(236,233,245,0.31)"/><circle cx="1179.0" cy="349.8" r="1.05" fill="rgba(220,230,255,0.66)"/><circle cx="536.8" cy="440.6" r="0.46" fill="rgba(236,233,245,0.68)"/><circle cx="958.0" cy="167.4" r="0.68" fill="rgba(255,230,220,0.62)"/><circle cx="989.5" cy="261.3" r="0.37" fill="rgba(220,255,245,0.59)"/><circle cx="344.9" cy="547.3" r="0.48" fill="rgba(255,220,235,0.73)"/><circle cx="1193.8" cy="125.9" r="0.56" fill="rgba(255,220,235,0.46)"/><circle cx="446.8" cy="372.0" r="0.24" fill="rgba(236,233,245,0.59)"/><circle cx="391.8" cy="77.8" r="0.41" fill="rgba(255,230,220,0.41)"/><circle cx="607.1" cy="28.4" r="0.65" fill="rgba(236,233,245,0.71)"/><circle cx="1048.0" cy="375.7" r="0.47" fill="rgba(220,230,255,0.47)"/><circle cx="202.1" cy="264.0" r="0.29" fill="rgba(220,230,255,0.67)"/><circle cx="552.3" cy="207.0" r="1.53" fill="rgba(236,233,245,0.71)"/><circle cx="160.2" cy="294.6" r="0.39" fill="rgba(236,233,245,0.30)"/><circle cx="182.4" cy="235.0" r="0.35" fill="rgba(236,233,245,0.54)"/><circle cx="445.0" cy="316.4" r="0.52" fill="rgba(236,233,245,0.43)"/><circle cx="1141.2" cy="215.2" r="1.46" fill="rgba(220,230,255,0.41)"/><circle cx="959.5" cy="51.4" r="1.28" fill="rgba(220,255,245,0.71)"/><circle cx="774.2" cy="506.2" r="0.39" fill="rgba(236,233,245,0.55)"/><circle cx="1166.5" cy="390.4" r="1.22" fill="rgba(255,220,235,0.56)"/><circle cx="347.1" cy="235.2" r="0.41" fill="rgba(255,220,235,0.74)"/><circle cx="339.5" cy="223.5" r="0.37" fill="rgba(236,233,245,0.69)"/><circle cx="289.7" cy="2.7" r="0.55" fill="rgba(255,230,220,0.31)"/><circle cx="829.0" cy="175.8" r="0.44" fill="rgba(255,220,235,0.26)"/><circle cx="145.9" cy="619.2" r="0.62" fill="rgba(220,230,255,0.38)"/><circle cx="44.1" cy="425.8" r="0.29" fill="rgba(255,220,235,0.38)"/><circle cx="942.5" cy="563.5" r="0.56" fill="rgba(255,230,220,0.42)"/><circle cx="685.1" cy="544.9" r="0.48" fill="rgba(220,230,255,0.35)"/><circle cx="927.1" cy="20.2" r="0.26" fill="rgba(236,233,245,0.34)"/><circle cx="772.9" cy="498.5" r="0.67" fill="rgba(220,230,255,0.71)"/><circle cx="1195.2" cy="548.6" r="0.31" fill="rgba(220,230,255,0.71)"/><circle cx="1019.3" cy="95.6" r="0.22" fill="rgba(255,220,235,0.58)"/><circle cx="594.7" cy="14.6" r="1.60" fill="rgba(236,233,245,0.35)"/><circle cx="70.4" cy="104.2" r="0.22" fill="rgba(220,255,245,0.70)"/><circle cx="173.8" cy="42.4" r="0.47" fill="rgba(220,230,255,0.36)"/><circle cx="417.0" cy="182.4" r="0.67" fill="rgba(236,233,245,0.74)"/><circle cx="575.8" cy="605.7" r="0.39" fill="rgba(236,233,245,0.60)"/><circle cx="340.4" cy="384.9" r="0.68" fill="rgba(255,230,220,0.32)"/><circle cx="147.9" cy="599.6" r="0.51" fill="rgba(236,233,245,0.30)"/><circle cx="646.9" cy="11.5" r="0.71" fill="rgba(255,220,235,0.73)"/><circle cx="270.2" cy="617.6" r="0.62" fill="rgba(236,233,245,0.42)"/><circle cx="500.2" cy="273.1" r="1.20" fill="rgba(255,220,235,0.63)"/><circle cx="269.3" cy="102.3" r="0.66" fill="rgba(236,233,245,0.28)"/><circle cx="222.3" cy="448.3" r="0.58" fill="rgba(220,230,255,0.28)"/><circle cx="381.4" cy="25.4" r="0.34" fill="rgba(236,233,245,0.25)"/><circle cx="1061.6" cy="62.9" r="0.47" fill="rgba(236,233,245,0.34)"/><circle cx="428.9" cy="428.4" r="0.57" fill="rgba(255,230,220,0.32)"/><circle cx="978.8" cy="217.9" r="0.53" fill="rgba(220,255,245,0.33)"/><circle cx="1027.8" cy="168.4" r="0.31" fill="rgba(236,233,245,0.40)"/><circle cx="150.3" cy="381.6" r="0.67" fill="rgba(220,230,255,0.37)"/><circle cx="344.0" cy="446.2" r="0.24" fill="rgba(236,233,245,0.34)"/><circle cx="894.8" cy="33.8" r="0.63" fill="rgba(220,255,245,0.71)"/><circle cx="1121.5" cy="388.1" r="0.61" fill="rgba(255,230,220,0.54)"/><circle cx="1024.6" cy="554.6" r="1.20" fill="rgba(220,255,245,0.41)"/><circle cx="809.7" cy="111.3" r="1.56" fill="rgba(236,233,245,0.61)"/><circle cx="429.3" cy="605.8" r="0.29" fill="rgba(255,220,235,0.44)"/><circle cx="788.6" cy="556.3" r="0.52" fill="rgba(236,233,245,0.48)"/><circle cx="350.0" cy="277.9" r="0.42" fill="rgba(255,230,220,0.72)"/><circle cx="110.8" cy="587.8" r="0.27" fill="rgba(236,233,245,0.57)"/><circle cx="30.3" cy="468.8" r="1.42" fill="rgba(236,233,245,0.58)"/><circle cx="508.8" cy="571.2" r="0.72" fill="rgba(255,220,235,0.71)"/><circle cx="834.6" cy="413.6" r="0.30" fill="rgba(236,233,245,0.39)"/><circle cx="777.1" cy="392.5" r="0.52" fill="rgba(236,233,245,0.59)"/><circle cx="238.5" cy="80.8" r="0.39" fill="rgba(255,230,220,0.57)"/><circle cx="656.2" cy="349.5" r="0.41" fill="rgba(220,255,245,0.46)"/><circle cx="1068.9" cy="147.0" r="0.42" fill="rgba(255,230,220,0.50)"/><circle cx="754.2" cy="30.9" r="0.21" fill="rgba(236,233,245,0.26)"/><circle cx="398.0" cy="278.4" r="1.11" fill="rgba(220,255,245,0.47)"/><circle cx="1089.5" cy="582.6" r="0.55" fill="rgba(255,220,235,0.32)"/><circle cx="751.1" cy="477.4" r="0.46" fill="rgba(255,220,235,0.26)"/><circle cx="99.0" cy="71.4" r="0.52" fill="rgba(236,233,245,0.42)"/><circle cx="403.0" cy="275.1" r="1.55" fill="rgba(236,233,245,0.43)"/><circle cx="61.2" cy="11.2" r="1.53" fill="rgba(255,230,220,0.75)"/><circle cx="362.0" cy="256.5" r="0.60" fill="rgba(220,255,245,0.52)"/><circle cx="886.9" cy="610.3" r="1.49" fill="rgba(236,233,245,0.39)"/><circle cx="218.2" cy="621.6" r="1.01" fill="rgba(255,230,220,0.40)"/><circle cx="466.2" cy="429.2" r="0.61" fill="rgba(236,233,245,0.28)"/><circle cx="407.8" cy="68.2" r="0.22" fill="rgba(236,233,245,0.65)"/><circle cx="273.3" cy="333.1" r="0.49" fill="rgba(236,233,245,0.40)"/><circle cx="685.3" cy="317.2" r="0.96" fill="rgba(236,233,245,0.37)"/><circle cx="775.6" cy="226.4" r="0.66" fill="rgba(236,233,245,0.28)"/><circle cx="745.2" cy="458.9" r="0.53" fill="rgba(220,230,255,0.50)"/><circle cx="718.9" cy="526.2" r="0.61" fill="rgba(220,230,255,0.50)"/><circle cx="1081.1" cy="477.2" r="0.48" fill="rgba(236,233,245,0.64)"/><circle cx="545.4" cy="586.4" r="0.49" fill="rgba(236,233,245,0.43)"/><circle cx="832.8" cy="445.6" r="0.57" fill="rgba(220,255,245,0.48)"/><circle cx="389.8" cy="84.6" r="0.60" fill="rgba(220,255,245,0.52)"/><circle cx="164.7" cy="627.7" r="0.38" fill="rgba(255,230,220,0.30)"/><circle cx="283.1" cy="392.5" r="1.25" fill="rgba(236,233,245,0.25)"/><circle cx="119.7" cy="590.6" r="0.59" fill="rgba(236,233,245,0.67)"/><circle cx="274.0" cy="158.5" r="0.56" fill="rgba(220,230,255,0.61)"/><circle cx="802.0" cy="566.7" r="0.61" fill="rgba(236,233,245,0.41)"/><circle cx="484.5" cy="63.6" r="0.68" fill="rgba(220,230,255,0.66)"/><circle cx="734.8" cy="297.6" r="1.48" fill="rgba(236,233,245,0.69)"/><circle cx="977.5" cy="606.6" r="0.34" fill="rgba(236,233,245,0.68)"/><circle cx="254.8" cy="224.6" r="0.69" fill="rgba(255,220,235,0.54)"/><circle cx="339.2" cy="52.0" r="0.45" fill="rgba(236,233,245,0.51)"/><circle cx="483.6" cy="2.0" r="1.56" fill="rgba(236,233,245,0.61)"/><circle cx="617.1" cy="75.8" r="0.46" fill="rgba(255,230,220,0.62)"/><circle cx="356.8" cy="349.5" r="0.33" fill="rgba(236,233,245,0.41)"/><circle cx="299.1" cy="293.4" r="0.95" fill="rgba(236,233,245,0.47)"/><circle cx="1174.6" cy="291.6" r="0.25" fill="rgba(220,230,255,0.52)"/><circle cx="359.3" cy="381.7" r="0.22" fill="rgba(220,230,255,0.61)"/><circle cx="477.1" cy="413.0" r="0.67" fill="rgba(236,233,245,0.39)"/><line x1="582.1" y1="264.3" x2="663.5" y2="246.2" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="663.5" y1="246.2" x2="726.9" y2="271.6" stroke="rgba(255,184,163,0.28)" stroke-width="0.8"/><line x1="663.5" y1="246.2" x2="853.6" y2="362.1" stroke="rgba(255,184,163,0.28)" stroke-width="0.8"/><line x1="726.9" y1="271.6" x2="773.9" y2="298.7" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="773.9" y1="298.7" x2="810.1" y2="329.5" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="773.9" y1="298.7" x2="712.4" y2="360.2" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="773.9" y1="298.7" x2="868.1" y2="267.9" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="868.1" y1="267.9" x2="904.2" y2="296.9" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="904.2" y1="296.9" x2="940.4" y2="273.4" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="940.4" y1="273.4" x2="973.0" y2="300.5" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="973.0" y1="300.5" x2="1012.8" y2="275.2" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="1012.8" y1="275.2" x2="1052.7" y2="296.9" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="1052.7" y1="296.9" x2="1067.1" y2="333.1" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="1052.7" y1="296.9" x2="1092.5" y2="327.7" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="1052.7" y1="296.9" x2="1097.9" y2="271.6" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="1097.9" y1="271.6" x2="1103.3" y2="403.7" stroke="rgba(143,223,212,0.28)" stroke-width="0.8"/><line x1="1092.5" y1="327.7" x2="1061.7" y2="387.4" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="980.3" y1="382.0" x2="853.6" y2="362.1" stroke="rgba(200,165,255,0.28)" stroke-width="0.8"/><line x1="980.3" y1="382.0" x2="1020.1" y2="401.9" stroke="rgba(200,165,255,0.28)" stroke-width="0.8"/><line x1="980.3" y1="382.0" x2="1061.7" y2="387.4" stroke="rgba(200,165,255,0.28)" stroke-width="0.8"/><line x1="1020.1" y1="401.9" x2="998.4" y2="427.2" stroke="rgba(200,165,255,0.28)" stroke-width="0.8"/><line x1="1020.1" y1="401.9" x2="853.6" y2="362.1" stroke="rgba(200,165,255,0.28)" stroke-width="0.8"/><line x1="1061.7" y1="387.4" x2="853.6" y2="362.1" stroke="rgba(200,165,255,0.28)" stroke-width="0.8"/><line x1="1061.7" y1="387.4" x2="998.4" y2="427.2" stroke="rgba(200,165,255,0.28)" stroke-width="0.8"/><line x1="1103.3" y1="403.7" x2="853.6" y2="362.1" stroke="rgba(200,165,255,0.28)" stroke-width="0.8"/><line x1="853.6" y1="362.1" x2="998.4" y2="427.2" stroke="rgba(255,225,163,0.28)" stroke-width="0.8"/><line x1="998.4" y1="427.2" x2="1103.3" y2="403.7" stroke="rgba(255,225,163,0.28)" stroke-width="0.8"/><line x1="821.0" y1="394.6" x2="853.6" y2="362.1" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="821.0" y1="394.6" x2="773.9" y2="427.2" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="773.9" y1="427.2" x2="726.9" y2="405.5" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="773.9" y1="427.2" x2="853.6" y2="362.1" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="726.9" y1="405.5" x2="821.0" y2="394.6" stroke="rgba(255,225,163,0.12)" stroke-width="0.8"/><line x1="817.4" y1="202.8" x2="663.5" y2="246.2" stroke="rgba(255,225,163,0.28)" stroke-width="0.8"/><line x1="817.4" y1="202.8" x2="853.6" y2="362.1" stroke="rgba(255,225,163,0.28)" stroke-width="0.8"/><line x1="817.4" y1="202.8" x2="1097.9" y2="271.6" stroke="rgba(255,225,163,0.28)" stroke-width="0.8"/><line x1="817.4" y1="202.8" x2="998.4" y2="427.2" stroke="rgba(255,225,163,0.28)" stroke-width="0.8"/><defs><radialGradient id="g0"><stop offset="0%" stop-color="rgb(255,184,163)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(255,184,163)" stop-opacity="0"/></radialGradient><radialGradient id="g1"><stop offset="0%" stop-color="rgb(255,184,163)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(255,184,163)" stop-opacity="0"/></radialGradient><radialGradient id="g2"><stop offset="0%" stop-color="rgb(255,184,163)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(255,184,163)" stop-opacity="0"/></radialGradient><radialGradient id="g3"><stop offset="0%" stop-color="rgb(143,223,212)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(143,223,212)" stop-opacity="0"/></radialGradient><radialGradient id="g4"><stop offset="0%" stop-color="rgb(255,193,112)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(255,193,112)" stop-opacity="0"/></radialGradient><radialGradient id="g5"><stop offset="0%" stop-color="rgb(255,184,163)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(255,184,163)" stop-opacity="0"/></radialGradient><radialGradient id="g6"><stop offset="0%" stop-color="rgb(143,223,212)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(143,223,212)" stop-opacity="0"/></radialGradient><radialGradient id="g7"><stop offset="0%" stop-color="rgb(143,223,212)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(143,223,212)" stop-opacity="0"/></radialGradient><radialGradient id="g8"><stop offset="0%" stop-color="rgb(143,223,212)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(143,223,212)" stop-opacity="0"/></radialGradient><radialGradient id="g9"><stop offset="0%" stop-color="rgb(143,223,212)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(143,223,212)" stop-opacity="0"/></radialGradient><radialGradient id="g10"><stop offset="0%" stop-color="rgb(255,184,163)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(255,184,163)" stop-opacity="0"/></radialGradient><radialGradient id="g11"><stop offset="0%" stop-color="rgb(143,223,212)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(143,223,212)" stop-opacity="0"/></radialGradient><radialGradient id="g12"><stop offset="0%" stop-color="rgb(143,223,212)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(143,223,212)" stop-opacity="0"/></radialGradient><radialGradient id="g13"><stop offset="0%" stop-color="rgb(255,193,112)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(255,193,112)" stop-opacity="0"/></radialGradient><radialGradient id="g14"><stop offset="0%" stop-color="rgb(255,193,112)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(255,193,112)" stop-opacity="0"/></radialGradient><radialGradient id="g15"><stop offset="0%" stop-color="rgb(200,165,255)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(200,165,255)" stop-opacity="0"/></radialGradient><radialGradient id="g16"><stop offset="0%" stop-color="rgb(200,165,255)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(200,165,255)" stop-opacity="0"/></radialGradient><radialGradient id="g17"><stop offset="0%" stop-color="rgb(200,165,255)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(200,165,255)" stop-opacity="0"/></radialGradient><radialGradient id="g18"><stop offset="0%" stop-color="rgb(200,165,255)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(200,165,255)" stop-opacity="0"/></radialGradient><radialGradient id="g19"><stop offset="0%" stop-color="rgb(255,225,163)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(255,225,163)" stop-opacity="0"/></radialGradient><radialGradient id="g20"><stop offset="0%" stop-color="rgb(255,225,163)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(255,225,163)" stop-opacity="0"/></radialGradient><radialGradient id="g21"><stop offset="0%" stop-color="rgb(255,225,163)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(255,225,163)" stop-opacity="0"/></radialGradient><radialGradient id="g22"><stop offset="0%" stop-color="rgb(255,225,163)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(255,225,163)" stop-opacity="0"/></radialGradient><radialGradient id="g23"><stop offset="0%" stop-color="rgb(168,237,221)" stop-opacity="0.32"/><stop offset="100%" stop-color="rgb(168,237,221)" stop-opacity="0"/></radialGradient><radialGradient id="g24"><stop offset="0%" stop-color="rgb(255,225,163)" stop-opacity="0.55"/><stop offset="100%" stop-color="rgb(255,225,163)" stop-opacity="0"/></radialGradient></defs><circle cx="582.1" cy="264.3" r="18.5" fill="url(#g0)"/><circle cx="663.5" cy="246.2" r="31.7" fill="url(#g1)"/><circle cx="726.9" cy="271.6" r="34.3" fill="url(#g2)"/><circle cx="773.9" cy="298.7" r="26.4" fill="url(#g3)"/><circle cx="810.1" cy="329.5" r="21.1" fill="url(#g4)"/><circle cx="712.4" cy="360.2" r="15.8" fill="url(#g5)"/><circle cx="868.1" cy="267.9" r="18.5" fill="url(#g6)"/><circle cx="904.2" cy="296.9" r="18.5" fill="url(#g7)"/><circle cx="940.4" cy="273.4" r="17.2" fill="url(#g8)"/><circle cx="973.0" cy="300.5" r="17.2" fill="url(#g9)"/><circle cx="1012.8" cy="275.2" r="34.3" fill="url(#g10)"/><circle cx="1052.7" cy="296.9" r="21.1" fill="url(#g11)"/><circle cx="1097.9" cy="271.6" r="33.0" fill="url(#g12)"/><circle cx="1067.1" cy="333.1" r="15.8" fill="url(#g13)"/><circle cx="1092.5" cy="327.7" r="15.8" fill="url(#g14)"/><circle cx="980.3" cy="382.0" r="31.7" fill="url(#g15)"/><circle cx="1020.1" cy="401.9" r="33.0" fill="url(#g16)"/><circle cx="1061.7" cy="387.4" r="34.3" fill="url(#g17)"/><circle cx="1103.3" cy="403.7" r="33.0" fill="url(#g18)"/><circle cx="853.6" cy="362.1" r="37.0" fill="url(#g19)"/><circle cx="998.4" cy="427.2" r="33.0" fill="url(#g20)"/><circle cx="821.0" cy="394.6" r="21.1" fill="url(#g21)"/><circle cx="773.9" cy="427.2" r="18.5" fill="url(#g22)"/><circle cx="726.9" cy="405.5" r="18.5" fill="url(#g23)"/><circle cx="817.4" cy="202.8" r="26.4" fill="url(#g24)"/><circle cx="582.1" cy="264.3" r="3.1" fill="rgba(255,184,163,0.55)"/><circle cx="582.1" cy="264.3" r="1.2" fill="rgba(255,255,255,0.39)"/><circle cx="663.5" cy="246.2" r="5.3" fill="rgba(255,184,163,0.95)"/><circle cx="663.5" cy="246.2" r="2.1" fill="rgba(255,255,255,0.66)"/><line x1="639.8" y1="246.2" x2="687.3" y2="246.2" stroke="rgba(255,184,163,0.5)" stroke-width="0.7"/><line x1="663.5" y1="222.5" x2="663.5" y2="270.0" stroke="rgba(255,184,163,0.5)" stroke-width="0.7"/><circle cx="726.9" cy="271.6" r="5.7" fill="rgba(255,184,163,0.95)"/><circle cx="726.9" cy="271.6" r="2.3" fill="rgba(255,255,255,0.66)"/><line x1="701.1" y1="271.6" x2="752.6" y2="271.6" stroke="rgba(255,184,163,0.5)" stroke-width="0.7"/><line x1="726.9" y1="245.8" x2="726.9" y2="297.3" stroke="rgba(255,184,163,0.5)" stroke-width="0.7"/><circle cx="773.9" cy="298.7" r="4.4" fill="rgba(143,223,212,0.85)"/><circle cx="773.9" cy="298.7" r="1.8" fill="rgba(255,255,255,0.59)"/><circle cx="810.1" cy="329.5" r="3.5" fill="rgba(255,193,112,0.7)"/><circle cx="810.1" cy="329.5" r="1.4" fill="rgba(255,255,255,0.49)"/><circle cx="712.4" cy="360.2" r="2.6" fill="rgba(255,184,163,0.5)"/><circle cx="712.4" cy="360.2" r="1.1" fill="rgba(255,255,255,0.35)"/><circle cx="868.1" cy="267.9" r="3.1" fill="rgba(143,223,212,0.55)"/><circle cx="868.1" cy="267.9" r="1.2" fill="rgba(255,255,255,0.39)"/><circle cx="904.2" cy="296.9" r="3.1" fill="rgba(143,223,212,0.55)"/><circle cx="904.2" cy="296.9" r="1.2" fill="rgba(255,255,255,0.39)"/><circle cx="940.4" cy="273.4" r="2.9" fill="rgba(143,223,212,0.5)"/><circle cx="940.4" cy="273.4" r="1.1" fill="rgba(255,255,255,0.35)"/><circle cx="973.0" cy="300.5" r="2.9" fill="rgba(143,223,212,0.5)"/><circle cx="973.0" cy="300.5" r="1.1" fill="rgba(255,255,255,0.35)"/><circle cx="1012.8" cy="275.2" r="5.7" fill="rgba(255,184,163,0.95)"/><circle cx="1012.8" cy="275.2" r="2.3" fill="rgba(255,255,255,0.66)"/><line x1="987.1" y1="275.2" x2="1038.6" y2="275.2" stroke="rgba(255,184,163,0.5)" stroke-width="0.7"/><line x1="1012.8" y1="249.4" x2="1012.8" y2="300.9" stroke="rgba(255,184,163,0.5)" stroke-width="0.7"/><circle cx="1052.7" cy="296.9" r="3.5" fill="rgba(143,223,212,0.65)"/><circle cx="1052.7" cy="296.9" r="1.4" fill="rgba(255,255,255,0.45)"/><circle cx="1097.9" cy="271.6" r="5.5" fill="rgba(143,223,212,0.93)"/><circle cx="1097.9" cy="271.6" r="2.2" fill="rgba(255,255,255,0.65)"/><line x1="1073.2" y1="271.6" x2="1122.7" y2="271.6" stroke="rgba(143,223,212,0.5)" stroke-width="0.7"/><line x1="1097.9" y1="246.8" x2="1097.9" y2="296.3" stroke="rgba(143,223,212,0.5)" stroke-width="0.7"/><circle cx="1067.1" cy="333.1" r="2.6" fill="rgba(255,193,112,0.5)"/><circle cx="1067.1" cy="333.1" r="1.1" fill="rgba(255,255,255,0.35)"/><circle cx="1092.5" cy="327.7" r="2.6" fill="rgba(255,193,112,0.5)"/><circle cx="1092.5" cy="327.7" r="1.1" fill="rgba(255,255,255,0.35)"/><circle cx="980.3" cy="382.0" r="5.3" fill="rgba(200,165,255,0.9)"/><circle cx="980.3" cy="382.0" r="2.1" fill="rgba(255,255,255,0.63)"/><line x1="956.5" y1="382.0" x2="1004.0" y2="382.0" stroke="rgba(200,165,255,0.5)" stroke-width="0.7"/><line x1="980.3" y1="358.2" x2="980.3" y2="405.7" stroke="rgba(200,165,255,0.5)" stroke-width="0.7"/><circle cx="1020.1" cy="401.9" r="5.5" fill="rgba(200,165,255,0.92)"/><circle cx="1020.1" cy="401.9" r="2.2" fill="rgba(255,255,255,0.64)"/><line x1="995.3" y1="401.9" x2="1044.8" y2="401.9" stroke="rgba(200,165,255,0.5)" stroke-width="0.7"/><line x1="1020.1" y1="377.1" x2="1020.1" y2="426.6" stroke="rgba(200,165,255,0.5)" stroke-width="0.7"/><circle cx="1061.7" cy="387.4" r="5.7" fill="rgba(200,165,255,0.93)"/><circle cx="1061.7" cy="387.4" r="2.3" fill="rgba(255,255,255,0.65)"/><line x1="1036.0" y1="387.4" x2="1087.4" y2="387.4" stroke="rgba(200,165,255,0.5)" stroke-width="0.7"/><line x1="1061.7" y1="361.7" x2="1061.7" y2="413.1" stroke="rgba(200,165,255,0.5)" stroke-width="0.7"/><circle cx="1103.3" cy="403.7" r="5.5" fill="rgba(200,165,255,0.92)"/><circle cx="1103.3" cy="403.7" r="2.2" fill="rgba(255,255,255,0.64)"/><line x1="1078.6" y1="403.7" x2="1128.1" y2="403.7" stroke="rgba(200,165,255,0.5)" stroke-width="0.7"/><line x1="1103.3" y1="378.9" x2="1103.3" y2="428.4" stroke="rgba(200,165,255,0.5)" stroke-width="0.7"/><circle cx="853.6" cy="362.1" r="6.2" fill="rgba(255,225,163,1)"/><circle cx="853.6" cy="362.1" r="2.5" fill="rgba(255,255,255,0.70)"/><line x1="825.9" y1="362.1" x2="881.3" y2="362.1" stroke="rgba(255,225,163,0.5)" stroke-width="0.7"/><line x1="853.6" y1="334.3" x2="853.6" y2="389.8" stroke="rgba(255,225,163,0.5)" stroke-width="0.7"/><circle cx="998.4" cy="427.2" r="5.5" fill="rgba(255,225,163,0.94)"/><circle cx="998.4" cy="427.2" r="2.2" fill="rgba(255,255,255,0.66)"/><line x1="973.6" y1="427.2" x2="1023.1" y2="427.2" stroke="rgba(255,225,163,0.5)" stroke-width="0.7"/><line x1="998.4" y1="402.5" x2="998.4" y2="452.0" stroke="rgba(255,225,163,0.5)" stroke-width="0.7"/><circle cx="821.0" cy="394.6" r="3.5" fill="rgba(255,225,163,0.7)"/><circle cx="821.0" cy="394.6" r="1.4" fill="rgba(255,255,255,0.49)"/><circle cx="773.9" cy="427.2" r="3.1" fill="rgba(255,225,163,0.6)"/><circle cx="773.9" cy="427.2" r="1.2" fill="rgba(255,255,255,0.42)"/><circle cx="726.9" cy="405.5" r="3.1" fill="rgba(168,237,221,0.55)"/><circle cx="726.9" cy="405.5" r="1.2" fill="rgba(255,255,255,0.39)"/><circle cx="817.4" cy="202.8" r="4.4" fill="rgba(255,225,163,0.85)"/><circle cx="817.4" cy="202.8" r="1.8" fill="rgba(255,255,255,0.59)"/><line x1="797.6" y1="202.8" x2="837.2" y2="202.8" stroke="rgba(255,225,163,0.5)" stroke-width="0.7"/><line x1="817.4" y1="183.0" x2="817.4" y2="222.6" stroke="rgba(255,225,163,0.5)" stroke-width="0.7"/>
+  </svg>
+
+  <div class="url-mark">
+    <span class="at">@</span>riaz-sana.github.io
+  </div>
+
+  <div class="system-mark">
+    sana<span class="acc">.</span>os<span class="v">v 0.1</span>
+  </div>
+
+  <div class="content">
+    <div class="top">
+      <span class="pulse"></span>
+      <span class="brand">Sana<em>.</em></span>
+    </div>
+
+    <div class="middle">
+      <div class="pre">A Knowledge Graph of a Life</div>
+      <h1 class="name">
+        Sana Riaz
+      </h1>
+      <div class="role">ML Engineer · Edinburgh</div>
+      <div class="tagline">
+        Both the map and the maker<br>are still in motion.
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="pseudo-btn primary">⊙ &nbsp;Wander the sky</span>
+      <span class="pseudo-btn ghost">▸ &nbsp;Talk to her</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
